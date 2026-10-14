@@ -62,3 +62,25 @@ Method: X API (`from:saylor` searches, post lookups), fxtwitter for full long-po
 | Quote cards | Rotating **"In his words"** strip on /learn with dated, linked quotes (these 11 only) | this file |
 
 Gaps: no transcript of the World Bank talk; X Articles bodies not fetched; no Saylor quote yet mentioning Robinhood Chain or $STRATEGY specifically (don't imply one).
+
+## Vlad Tenev (Robinhood CEO) on Robinhood Chain and RWAs (verified on X, Oct 14, 2026)
+- "Robinhood Chain exists to make real world assets programmable, globally portable, and always available, with the product quality you've come to expect from Robinhood." 2026-07-16. https://x.com/vladtenev/status/2077814433762451646 (used on site)
+- "Robinhood Chain is built for tokenized real-world assets and the apps people actually want to use with them. Usage follows utility: …" 2026-10-12 (reply). https://x.com/vladtenev/status/2109700037861310828
+- "While we're building robinhood chain to be the best chain for RWA … it works great for memes too" 2026-07-08. https://x.com/vladtenev/status/2074695821896065360
+- "The future of crypto is in real-world assets." 2026-07-08. https://x.com/vladtenev/status/2074646246476890610
+
+None of these uses the exact phrase "home of RWAs".
+
+## Base volume check (Oct 14, 2026, around 10:45 CT)
+- **Pool:** MSTRc/USDC on Aerodrome Slipstream, Base pool 0x8b27f626ab668197000bc722a1012022caed10e2.
+- **Base token:** 0xb2000000000000000000004884b426556b92883d. DexScreener names it "Strategy Inc." (MSTRc), the Coinbase-tokenized MSTR. This is the same as the CoinGecko listing.
+- **24h volume:** $17.02M (GeckoTerminal), $17.10M (DexScreener); all 17 pairs total $17.20M. CoinGecko shows $16.42M for the token.
+- **Size relative to the market:** CoinGecko market cap is only $2.27M, and pool liquidity is about $2.15M, so the pool turned over about 8× in a day.
+- **Trades:** 8,953 trades from 454 buyers and 387 sellers.
+- **Concentration:** in the last 300 trades (about 40 minutes), one address (0x80e4e365…dcc58) made 131 trades and about 57–59% of the USD volume, buying and selling within seconds. It's an externally owned account with about 184.9K lifetime transactions.
+- **Verdict:** the volume is real on-chain trading, but it is mostly one automated trader. It is not broad usage.
+- **Robinhood Chain cross-check:**
+  - DexScreener: 30 pairs, $4.37M, 7,603 trades.
+  - GeckoTerminal: 60 pools, $4.28M; token total $4.29M.
+  - CoinGecko: $4.18M.
+  - Top trader is 16% of the recent sample.
