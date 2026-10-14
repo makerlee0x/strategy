@@ -10,7 +10,6 @@ const POOLS = [
   ['STRATEGY / MSTR', 'robinhood', '0xa6975f4720a95aa9cdfa9b010a065b0e941534c93f9fa708104c08f0ac029ca0'],
   ['MSTRx / USDC (Solana)', 'solana', 'RyhF4cksVZY7vcqJpoytHcxcGNKRp27PEGhSnEPpbGv'],
   ['MSTRx / SOL (Solana)', 'solana', '2ngTuP7xA581dqX9uJkGRqxmKuehY3k4SDfPebeoRG2J'],
-  ['MSTRc / USDC (Base)', 'base', '0x8b27f626ab668197000bc722a1012022caed10e2']
 ];
 const fmtNY = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hour12: false });
 /** Fraction of the hour starting at unix `ts` that falls inside the regular session (0..1). */

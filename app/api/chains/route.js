@@ -2,8 +2,8 @@ import { preflight, cachedFetch, lastGood, json, getJson } from '../../../lib/gu
 import cg from '../../../data/coingecko-tokens.json';
 export const dynamic = 'force-dynamic';
 // Per-chain activity for tokenized MSTR: 24h DEX volume + DEX liquidity (GeckoTerminal token totals) and DeFi TVL (DefiLlama, incl. lending).
-const NET = { robinhood: ['robinhood', 'Robinhood Chain'], solana: ['solana', 'Solana'], base: ['base', 'Base'], 'arbitrum-one': ['arbitrum', 'Arbitrum'], ethereum: ['eth', 'Ethereum'], 'binance-smart-chain': ['bsc', 'BNB Chain'], avalanche: ['avax', 'Avalanche'], hyperevm: ['hyperevm', 'HyperEVM'], 'morph-l2': ['morph-l2', 'Morph'], mantle: ['mantle', 'Mantle'] };
-// Tokens not in the CoinGecko list: Mantle WMSTRX (DefiLlama fluxion pool underlying).
+const NET = { robinhood: ['robinhood', 'Robinhood Chain'], solana: ['solana', 'Solana'], 'arbitrum-one': ['arbitrum', 'Arbitrum'], ethereum: ['eth', 'Ethereum'], 'binance-smart-chain': ['bsc', 'BNB Chain'], avalanche: ['avax', 'Avalanche'], hyperevm: ['hyperevm', 'HyperEVM'], 'morph-l2': ['morph-l2', 'Morph'], mantle: ['mantle', 'Mantle'] };
+// Tokens not in the CoinGecko list: Mantle WMSTRX (DefiLlama fluxion pool underlying). Base is intentionally not part of this comparison.
 const EXTRA = { mantle: ['0x266e5923f6118f8b340ca5a23ae7f71897361476'] };
 // Chains seen only in DefiLlama (no GeckoTerminal network).
 const LLAMA_ONLY = ['Defichain'];
@@ -25,17 +25,6 @@ async function load() {
     } catch (_) { chains.push({ key: p, chain: label, error: true }); }
     await sleep(1200);
   }
-  // Concentration check on chains with >$1M daily volume: share of the last 300 trades in the top pool made by the single busiest address.
-  for (const c of chains) if (!c.error && c.vol24Usd > 1e6 && c.topPool) {
-    try {
-      const [net, addr] = [c.topPool.split('_')[0], c.topPool.split('_').slice(1).join('_')];
-      const t = (await getJson(`https://api.geckoterminal.com/api/v2/networks/${net}/pools/${addr}/trades`, { ms: 15000 })).data.map(x => x.attributes);
-      const by = {}; let tot = 0; for (const x of t) { const v = +x.volume_in_usd || 0; tot += v; by[x.tx_from_address] = (by[x.tx_from_address] || 0) + v; }
-      const top = Object.values(by).sort((a, b) => b - a);
-      c.sample = { trades: t.length, traders: Object.keys(by).length, topTraderPct: tot ? top[0] / tot * 100 : null, top3Pct: tot ? (top[0] + (top[1] || 0) + (top[2] || 0)) / tot * 100 : null, avgTradeUsd: t.length ? tot / t.length : null, from: t[t.length - 1]?.block_timestamp, to: t[0]?.block_timestamp };
-    } catch (_) {}
-    await sleep(1200);
-  }
   let llama = null;
   try {
     const y = await getJson('https://yields.llama.fi/pools', { ms: 30000, maxBytes: 40_000_000 }); llama = {};
@@ -43,7 +32,7 @@ async function load() {
   } catch (_) {}
   for (const c of chains) c.defiTvlUsd = llama ? (llama[c.chain] ?? null) : null;
   for (const n of LLAMA_ONLY) chains.push({ key: n.toLowerCase(), chain: n, vol24Usd: null, dexLiquidityUsd: null, defiTvlUsd: llama ? (llama[n] ?? null) : null, noDexData: true });
-  for (const c of chains) { c.turnover = c.vol24Usd != null && c.dexLiquidityUsd ? c.vol24Usd / c.dexLiquidityUsd : null; c.botFlag = !!(c.sample && c.sample.topTraderPct >= 40); }
+  for (const c of chains) { c.turnover = c.vol24Usd != null && c.dexLiquidityUsd ? c.vol24Usd / c.dexLiquidityUsd : null; }
   if (chains.every(c => c.error)) throw new Error('all_failed');
   chains.sort((a, b) => (b.vol24Usd ?? -1) - (a.vol24Usd ?? -1));
   chains.forEach((c, i) => c.rank = c.vol24Usd != null ? i + 1 : null);
