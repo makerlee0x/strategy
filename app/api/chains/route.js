@@ -1,0 +1,41 @@
+import { preflight, cachedFetch, lastGood, json, getJson } from '../../../lib/guard';
+import cg from '../../../data/coingecko-tokens.json';
+export const dynamic = 'force-dynamic';
+// Per-chain activity for tokenized MSTR: 24h DEX volume + DEX liquidity (GeckoTerminal token totals) and DeFi TVL (DefiLlama, incl. lending).
+const NET = { robinhood: ['robinhood', 'Robinhood Chain'], solana: ['solana', 'Solana'], base: ['base', 'Base'], 'arbitrum-one': ['arbitrum', 'Arbitrum'], ethereum: ['eth', 'Ethereum'], 'binance-smart-chain': ['bsc', 'BNB Chain'], avalanche: ['avax', 'Avalanche'], hyperevm: ['hyperevm', 'HyperEVM'] };
+const RX = /(^|-|W)MSTR(X|C|ON|B)?($|-)/i;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function load() {
+  const by = {};
+  for (const t of cg.tokens) for (const [p, a] of Object.entries(t.platforms || {})) if (NET[p]) (by[p] ||= []).push(a);
+  const chains = [];
+  for (const [p, addrs] of Object.entries(by)) {
+    const [gt, label] = NET[p];
+    try {
+      const url = `https://api.geckoterminal.com/api/v2/networks/${gt}/tokens/multi/${[...new Set(addrs)].join(',')}`; let d;
+      for (let i = 0; ; i++) { try { d = await getJson(url, { ms: 15000 }); break; } catch (e) { if (i >= 3) throw e; await sleep(2500 * (i + 1)); } }
+      const vol = d.data.reduce((s, x) => s + (+x.attributes.volume_usd?.h24 || 0), 0), liq = d.data.reduce((s, x) => s + (+x.attributes.total_reserve_in_usd || 0), 0);
+      chains.push({ key: p, chain: label, vol24Usd: vol, dexLiquidityUsd: liq });
+    } catch (_) { chains.push({ key: p, chain: label, error: true }); }
+    await sleep(1200);
+  }
+  let llama = null;
+  try {
+    const y = await getJson('https://yields.llama.fi/pools', { ms: 30000, maxBytes: 40_000_000 }); llama = {};
+    y.data.filter(p => RX.test(p.symbol)).forEach(p => llama[p.chain] = (llama[p.chain] || 0) + p.tvlUsd);
+  } catch (_) {}
+  for (const c of chains) c.defiTvlUsd = llama ? (llama[c.chain] ?? null) : null;
+  if (chains.every(c => c.error)) throw new Error('all_failed');
+  chains.sort((a, b) => (b.vol24Usd || 0) - (a.vol24Usd || 0));
+  const totVol = chains.reduce((s, c) => s + (c.vol24Usd || 0), 0);
+  chains.forEach(c => c.volSharePct = totVol && c.vol24Usd != null ? c.vol24Usd / totVol * 100 : null);
+  return { ok: true, fetchedAt: new Date().toISOString(), source: 'geckoterminal + defillama', totalDexVol24Usd: totVol, llamaTracked: llama ? Object.keys(llama) : [], chains,
+    note: 'Volume and DEX liquidity: GeckoTerminal 24h totals for each tokenized-MSTR contract on that chain. DeFi TVL: DefiLlama pools with MSTR tokens (DEX + lending); DefiLlama does not list Robinhood Chain.' };
+}
+export async function OPTIONS(req) { return preflight(req); }
+export async function GET(req) {
+  const pf = preflight(req, { browser: { limit: 30 }, anon: { limit: 10 }, prefix: 'chains' }); if (pf) return pf;
+  const origin = req.headers.get('origin') || '';
+  try { const { value } = await cachedFetch('chains', 600_000, load); return json(value, { origin, sMaxAge: 300 }); }
+  catch (e) { const lg = lastGood('chains'); return json(lg ? { ...lg.value, ok: false, delayed: true } : { ok: false, delayed: true, chains: [] }, { origin, sMaxAge: 30 }); }
+}

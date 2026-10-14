@@ -48,3 +48,18 @@ export function Collateral({ C }) {
     {(C?.rows || []).map((r, i) => <tr key={i}><td><b>{r.protocol}</b></td><td>{r.chain}</td><td>{r.token}</td><td>{r.maxLtvPct != null ? r.maxLtvPct.toFixed(r.maxLtvPct % 1 ? 1 : 0) + '% ' + (r.ltvKind === 'liquidation' ? 'liq.' : 'max') : 'not published'}</td><td>{r.borrowAsset}</td><td>{r.borrowApyPct != null ? r.borrowApyPct.toFixed(2) + '%' : '—'}</td><td>{r.suppliedUsd != null ? fmt(r.suppliedUsd) : '—'}</td><td><a href={r.url} target="_blank" rel="noopener">Open ↗</a></td></tr>)}</tbody></table>
     <F>Kamino: max LTV and supplied collateral from DefiLlama; the borrow rate depends on what you borrow. Morpho: liquidation LTV, rates and sizes from the Morpho API; many markets are very small. Teller: accepts MSTR and STRATEGY for fixed-term loans; it doesn’t publish terms per asset. Loans can be liquidated.</F></Panel>;
 }
+
+/** Robinhood volume vs Solana TVL — use vs money sitting idle. */
+export function ChainActivity({ CH }) {
+  const c = Object.fromEntries((CH?.chains || []).map(x => [x.key, x]));
+  const rh = c.robinhood, so = c.solana, top = (CH?.chains || []).filter(x => !x.error && (x.vol24Usd || 0) > 0).slice(0, 5);
+  return <Panel t="Where MSTR trades · volume first" r={<St d={CH} s="GECKOTERMINAL + DEFILLAMA" />}><div className="g2">
+    <div style={{ border: '2px solid #d9232e', padding: 16 }}><span className="pill">Primary · use</span><div className="d" style={{ fontSize: 28, margin: '10px 0 4px' }}>Robinhood Chain</div>
+      <div className="k">24h DEX volume</div><div className="stamp" style={{ fontSize: 48, color: '#d9232e' }}>{fmt(rh?.vol24Usd)}</div>
+      <div className="say">DEX liquidity {fmt(rh?.dexLiquidityUsd)}. Volume is money that changed hands — the primary signal of use.</div></div>
+    <div style={{ border: '1px solid #1b1916', padding: 16 }}><span className="pill" style={{ background: '#1b1916' }}>Secondary · parked capital</span><div className="d" style={{ fontSize: 28, margin: '10px 0 4px' }}>Solana</div>
+      <div className="k">DeFi TVL (lending + pools)</div><div className="stamp" style={{ fontSize: 48 }}>{fmt(so?.defiTvlUsd)}</div>
+      <div className="say">24h DEX volume only {fmt(so?.vol24Usd)}. High TVL can sit unused — lending and LP deposits that rarely trade. Volume shows activity; TVL does not.</div></div></div>
+    {top.length > 0 && <table style={{ marginTop: 14 }}><thead><tr><th>#</th><th>Chain</th><th>24h volume</th><th>Share</th><th>DEX liquidity</th><th>DeFi TVL</th></tr></thead><tbody>{top.map((x, i) => <tr key={x.key} style={x.key === 'robinhood' ? { background: 'rgba(217,35,46,.08)' } : undefined}><td style={{ color: '#d9232e' }}>{String(i + 1).padStart(2, '0')}</td><td><b>{x.chain}</b>{x.key === 'robinhood' ? ' · featured' : ''}</td><td>{fmt(x.vol24Usd)}</td><td>{x.volSharePct != null ? x.volSharePct.toFixed(0) + '%' : '—'}</td><td>{fmt(x.dexLiquidityUsd)}</td><td>{x.defiTvlUsd != null ? fmt(x.defiTvlUsd) : (x.key === 'robinhood' ? 'not on DefiLlama' : '—')}</td></tr>)}</tbody></table>}
+    <F>Volume and DEX liquidity from GeckoTerminal for each tokenized-MSTR contract on that chain. DeFi TVL from DefiLlama (DEX + lending pools with MSTR tokens). DefiLlama does not list Robinhood Chain, so its DeFi TVL is blank — use DEX liquidity instead.</F></Panel>;
+}
