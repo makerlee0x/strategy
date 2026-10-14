@@ -1,7 +1,7 @@
 'use client';
-import { fmt, num, pct, St } from './data'; import { Barcode } from './ui'; import { useLive } from '../lib/useLive';
+import { fmt, num, pct, St } from './data'; import { Barcode } from './ui'; import { useLive } from '../lib/useLive'; import { ReserveCard, Backing, OffHours, Quotes } from './backing';
 export default function P() {
-  const [T, RH, PP, SM] = useLive(['/api/mstr-tokens', '/api/robinhood-mstr', '/api/perps', '/api/strategy-metrics']);
+  const [T, RH, PP, SM] = useLive(['/api/mstr-tokens', '/api/robinhood-mstr', '/api/perps', '/api/strategy-metrics']); const [F8, OH] = useLive(['/api/strategy-filings', '/api/offhours']);
   const t = T?.totals || {}, iss = T?.tokens || [], mx = iss[0]?.circ || 1, M = SM?.display || {};
   return (<><div className="eyebrow">File 001 · Live · refreshes every 60s</div><h1 className="d">Strategy stock,<br /><em>on-chain.</em></h1><p className="sub" style={{ fontSize: 15 }}>MSTR now trades as a token, 24/7, on blockchains. Here is how much exists, where it lives, and what you can do with it.</p>
     <a href="/strategy/" style={{ textDecoration: 'none' }}><div className="redblock" style={{ gridTemplateColumns: '1.3fr 1fr', marginTop: 0 }}><div className="big d" style={{ fontSize: 44, padding: '22px 18px' }}><img src="/strategy-icon.png" alt="" width="56" height="56" style={{ verticalAlign: 'middle', marginRight: 14, border: '2px solid #f7f1e3', borderRadius: 8 }} />$STRATEGY coin<div style={{ fontSize: 15, fontFamily: 'IBM Plex Mono', fontWeight: 400, textTransform: 'none', marginTop: 8 }}>Paired with $MSTR · Backed by $BTC · Tokenized on Robinhood Chain →</div></div>
@@ -11,10 +11,14 @@ export default function P() {
       <div><div className="k">Traded in the last 24h</div><div className="big red">{fmt(t.vol24)}</div><div className="say">≈ {pct(t.volPctMcap, 0)} of all tokens changed hands</div></div>
       <div><div className="k">Share of MSTR on-chain</div><div className="big">{pct(t.pctShares)}</div><div className="say">of ~{t.sharesBasis ? (t.sharesBasis / 1e6).toFixed(0) : '—'}M shares</div></div>
       <div><div className="k">Perpetual futures 24h <St d={PP} /></div><div className="big">{fmt(PP?.totalVol24Usd)}</div><div className="say">Hyperliquid + Lighter</div></div></div></div>
+    <ReserveCard F8={F8} />
+    <Backing F8={F8} SM={SM} />
+    <OffHours OH={OH} compact />
     <div className="hero-chain" style={{ background: 'var(--paper)' }}><div><span className="pill">Featured home</span> <St d={RH} s="LIVE · RPC" /><div className="d" style={{ fontSize: 34, margin: '12px 0 6px' }}>Robinhood Chain</div><p className="sub">Built on Arbitrum for tokenized stocks. Robinhood's MSTR token trades here around the clock.</p>
       <div className="g3" style={{ marginTop: 14 }}><div><div className="k">Tokens live</div><div className="stamp">{num(RH?.supply)}</div></div><div><div className="k">Minted to date</div><div className="stamp">{RH?.mintBurn ? num(RH.mintBurn.minted) : RH?.scanning ? '…' : '—'}</div></div><div><div className="k">Burned to date</div><div className="stamp">{RH?.mintBurn ? num(RH.mintBurn.burned) : RH?.scanning ? '…' : '—'}</div></div></div></div>
       <div><span className="pill" style={{ background: '#1b1916' }}>Arbitrum One</span><div className="d" style={{ fontSize: 34, margin: '12px 0 6px' }}>Settlement layer</div><p className="sub">Arbitrum hosts MSTRx, Dinari and Reality MSTR tokens, and is the base Robinhood Chain builds on.</p>
         <div className="g3" style={{ marginTop: 14 }}>{Object.entries(RH?.arbitrum || { MSTRx: null, rMSTR: null, 'MSTR.d': null }).map(([k, v]) => <div key={k}><div className="k">{k} supply</div><div className="stamp" style={{ fontSize: 30 }}>{num(v)}</div></div>)}</div></div></div>
     <div className="panel"><div className="ph"><span>Who issues tokenized MSTR</span><St d={T} s="COINGECKO" /></div><div className="pb">{iss.length ? iss.map(x => <div className="hb" key={x.id}><span>{x.issuer}</span><div className="hbar" style={{ width: Math.max(.5, x.circ / mx * 100) + '%', background: x.issuer === 'Robinhood' ? '#d9232e' : '#1b1916' }} /><span style={{ textAlign: 'right' }}>{num(x.circ)}</span></div>) : <div className="k">Loading…</div>}<div className="k" style={{ marginTop: 8 }}>Tokens in circulation. xStocks is the largest issuer and Solana holds most DeFi liquidity; Robinhood is highlighted.</div></div></div>
+    <Quotes n={2} />
     <div className="redblock"><div className="big d" style={{ fontSize: 34 }}>Every share.<br />Every chain.<br />One ledger.</div><div className="rows">{[['01', 'Find your token →  /tokens'], ['02', 'Put it to work →  /opportunities'], ['03', 'How it works →  /learn']].map(([a, b]) => <div key={a}><i>{a}</i><span>{b}</span></div>)}<div style={{ border: 0 }}><Barcode seed="ONCHAIN" w={260} h={26} c="#f7f1e3" /></div></div></div></>);
 }
