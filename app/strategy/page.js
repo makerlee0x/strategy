@@ -1,9 +1,9 @@
 'use client';
-import { fmt, num, St } from '../data'; import { Panel, Barcode } from '../ui'; import Actions from './Modals'; import Chart from './Chart'; import { useLive } from '../../lib/useLive'; import { Backing } from '../backing';
+import { fmt, num, St } from '../data'; import { Panel, Barcode } from '../ui'; import Actions from './Modals'; import Chart from './Chart'; import { useLive } from '../../lib/useLive'; import { Backing } from '../backing'; import PoolBacking from './PoolBacking';
 const CA = '0x168661c52e5922288dfb2b3f323b6cf90eb21e18';
 const L = [['Explorer', 'https://robinhoodchain.blockscout.com/token/' + CA], ['Long', 'https://app.long.xyz/tokens/' + CA], ['FOMO', 'https://fomo.family/coin?address=' + CA + '&chainId=4663&r=0xmakerlee&source=share_link'], ['Dexscreener', 'https://dexscreener.com/robinhood/0xa6975f4720a95aa9cdfa9b010a065b0e941534c93f9fa708104c08f0ac029ca0'], ['@strategystock', 'https://x.com/strategystock'], ['Learn more', 'https://robinhood.com/rhj/stocktokens/']];
 export default function P() {
-  const [SM, PO, XF, RH] = useLive(['/api/strategy-metrics', '/api/pools', '/api/x-feed', '/api/robinhood-mstr']); const F8 = useLive('/api/strategy-filings');
+  const [SM, PO, XF, RH] = useLive(['/api/strategy-metrics', '/api/pools', '/api/x-feed', '/api/robinhood-mstr']); const F8 = useLive('/api/strategy-filings'); const PB = useLive('/api/pool-backing');
   const M = SM?.display || {}, R = SM?.raw || {}, pools = PO?.pools || [], prim = pools.find(p => p.primary);
   const rhLiq = pools.length ? null : null; const fees = R.volume24h != null ? R.volume24h / 1e6 * 1000 : null;
   const box = (k, v, red) => <div><div className="k">{k}</div><div className="stamp" style={{ fontSize: 34, color: red ? '#d9232e' : '#1b1916' }}>{v ?? '—'}</div></div>;
@@ -16,6 +16,7 @@ export default function P() {
       <Panel t="Liquidity" r={<St d={SM} s="STS" />}><div className="g2" style={{ gridTemplateColumns: '1fr 1fr', gap: 14 }}>{box('Pool size', M.liquidityUsd, 1)}{box('MSTR in pool', M.mstrInLp)}{box('Robinhood MSTR', RH?.supply ? num(RH.supply) : M.mstrTokenized)}{box('% of it in pool', R.mstrInLp != null && RH?.supply ? (R.mstrInLp / RH.supply * 100).toFixed(2) + '%' : M.mstrInLpPct, 1)}</div></Panel>
       <Panel t="Market" r={<St d={SM} s="STS" />}><div className="g2" style={{ gridTemplateColumns: '1fr 1fr', gap: 14 }}>{box('24h volume', M.volume24h, 1)}{box('Holders', M.holders)}{box('24h trades', M.trades24h)}{box('Pair', M.pairAsset)}</div></Panel></div>
     <Backing F8={F8} SM={SM} />
+    <PoolBacking D={PB} F8={F8} />
     <Chart />
     <div className="redblock"><div className="big d" style={{ fontSize: 36 }}>Buy STRATEGY,<br />pool holds MSTR.</div><div className="rows">
       <div><i>01</i><span>The pool pairs STRATEGY with real tokenized MSTR. Buying STRATEGY adds MSTR to the pool.</span></div>
