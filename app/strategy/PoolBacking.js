@@ -22,9 +22,9 @@ export default function PoolBacking({ D, F8 }) {
   const r = model(S, mc), now = S ? { mc: S.mcapUsd, mstr: S.stockInPool, pct: S.backingPct } : null;
   const formula = S ? `MSTR in pool ≈ L × (√p − √p_launch) × f, with p = market cap in MSTR ÷ 1B coins. L = ${num(S.L)} (on-chain launch range), launch at ≈ ${num(S.launchMcapStock)} MSTR market cap (≈ ${fmt(S.launchMcapStock * S.stockUsd)}), f = ${S.f?.toFixed(2)} (live pool MSTR ÷ curve), MSTR = ${fmt(S.stockUsd)}.` : '';
   // chart
-  const W = 720, H = 300, pl = 54, pr = 50, pt = 16, pb = 34, lx = v => pl + (Math.log10(v) - 6) / 3 * (W - pl - pr);
+  const W = 720, H = 300, pl = 54, pr = 110, pt = 32, pb = 34, lx = v => pl + (Math.log10(v) - 6) / 3 * (W - pl - pr);
   const pts = useMemo(() => S ? Array.from({ length: 61 }, (_, i) => { const v = Math.pow(10, 6 + i / 20); return { v, ...model(S, v) }; }) : [], [S]);
-  const ymax = Math.max(1, ...pts.map(p => p.mstr)) * 1.08, pmax = Math.max(12, ...pts.map(p => p.pct), now?.pct || 0, ...(D?.others || []).map(o => o.backingPct || 0)) * 1.1;
+  const ymax = Math.max(1, ...pts.map(p => p.mstr)) * 1.08, pmax = Math.max(12, ...pts.map(p => p.pct), now?.pct || 0) * 1.1;
   const ly = v => pt + (1 - v / ymax) * (H - pt - pb), ry = v => pt + (1 - v / pmax) * (H - pt - pb);
   const big = (k, v, red, sub) => <div><div className="k">{k}</div><div className="stamp" style={{ fontSize: 32, color: red ? '#d9232e' : '#1b1916' }}>{v ?? '—'}</div>{sub && <div className="k" style={{ textTransform: 'none', letterSpacing: 0 }}>{sub}</div>}</div>;
   return <Panel t="Pool backing · what if the market cap grows?" r={<St d={D} s="DEXSCREENER + ON-CHAIN" />}>
@@ -43,16 +43,15 @@ export default function PoolBacking({ D, F8 }) {
     </div>
     {S && <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', marginTop: 14, background: '#fbf7ec', border: '1px solid #1b1916' }} role="img" aria-label="MSTR in pool and backing percent versus market cap">
       {[1e6, 1e7, 1e8, 1e9].map(v => <g key={v}><line x1={lx(v)} x2={lx(v)} y1={pt} y2={H - pb} stroke="#1b191622" /><text x={lx(v)} y={H - 14} fontSize="11" textAnchor="middle" fill="#1b1916">{lab(v)}</text></g>)}
-      {[0, .5, 1].map(t => <g key={t}><text x={pl - 6} y={ly(ymax * t / 1.08) + 4} fontSize="10" textAnchor="end" fill="#d9232e">{num(Math.round(ymax * t / 1.08))}</text><text x={W - pr + 6} y={ry(pmax * t / 1.1) + 4} fontSize="10" fill="#1b1916">{(pmax * t / 1.1).toFixed(0)}%</text></g>)}
-      <text x={pl} y={pt - 4} fontSize="10" fill="#d9232e">MSTR IN POOL</text><text x={W - pr} y={pt - 4} fontSize="10" textAnchor="end" fill="#1b1916">BACKING %</text>
+      {[0, .5, 1].map(t => <g key={t}><text x={pl - 6} y={ly(ymax * t / 1.08) + 4} fontSize="10" textAnchor="end" fill="#d9232e">{num(Math.round(ymax * t / 1.08))}</text><text x={W - pr + 6} y={ry(pmax * t / 1.1) + 4} fontSize="10" fill="#1b1916">{(pmax * t / 1.1).toFixed(0)}%</text>{bps != null && <text x={W - 6} y={ly(ymax * t / 1.08) + 4} fontSize="10" textAnchor="end" fill="#d9232e">{(ymax * t / 1.08 * bps).toFixed(t ? 1 : 0)} BTC</text>}</g>)}
+      <text x={pl} y={pt - 8} fontSize="10" fill="#d9232e">MSTR IN POOL</text><text x={W - pr + 6} y={pt - 18} fontSize="10" fill="#1b1916">BACKING %</text>{bps != null && <text x={W - 6} y={pt - 4} fontSize="10" textAnchor="end" fill="#d9232e">BTC BEHIND POOL MSTR</text>}<line x1={W - pr + 52} x2={W - pr + 52} y1={pt} y2={H - pb} stroke="#1b191622" />
       <polyline fill="none" stroke="#d9232e" strokeWidth="2.4" points={pts.map(p => `${lx(p.v)},${ly(p.mstr)}`).join(' ')} />
       <polyline fill="none" stroke="#1b1916" strokeWidth="1.6" strokeDasharray="5 4" points={pts.map(p => `${lx(p.v)},${ry(p.pct)}`).join(' ')} />
-      {(D?.others || []).filter(o => !o.error && o.mcapUsd >= MIN && o.mcapUsd <= MAX).map(o => <g key={o.key}><rect x={lx(o.mcapUsd) - 4} y={ry(o.backingPct) - 4} width="8" height="8" fill="#f7f1e3" stroke="#1b1916" /><text x={lx(o.mcapUsd) + 7} y={ry(o.backingPct) - 6} fontSize="10" fill="#1b1916">{o.key}/{o.stock} {o.backingPct.toFixed(1)}%</text></g>)}
       {r && <line x1={lx(mc)} x2={lx(mc)} y1={pt} y2={H - pb} stroke="#d9232e" strokeDasharray="2 3" />}
-      {r && <circle cx={lx(mc)} cy={ly(r.mstr)} r="4" fill="#f7f1e3" stroke="#d9232e" strokeWidth="2" />}
+      {r && <g><circle cx={lx(mc)} cy={ly(r.mstr)} r="4" fill="#f7f1e3" stroke="#d9232e" strokeWidth="2" /><text x={lx(mc) - 8} y={ly(r.mstr) - 8} fontSize="11" textAnchor="end" fill="#d9232e">{num(Math.round(r.mstr))} MSTR{bps != null ? ' · ' + (r.mstr * bps).toFixed(2) + ' BTC' : ''}</text></g>}
       {now?.mc >= MIN && <g><circle cx={lx(now.mc)} cy={ly(now.mstr)} r="6" fill="#d9232e" /><text x={lx(now.mc) + 9} y={ly(now.mstr) - 6} fontSize="11" fill="#d9232e">STRATEGY now · {lab(now.mc)}</text></g>}
     </svg>}
-    <div className="k" style={{ marginTop: 6, textTransform: 'none', letterSpacing: 0 }}>Red line: MSTR in pool (left). Dashed line: backing % (right). Red dot: today. Squares: other LONG coins today (AI/NVDA, BONER/HIMS, MEME/AMC), backing % only, shown for comparison.</div>
+    <div className="k" style={{ marginTop: 6, textTransform: 'none', letterSpacing: 0 }}>Red line: MSTR in pool (left). Dashed line: backing % (right). Red dot: today. Right edge: BTC behind the pool’s MSTR (same red line).</div>
     <F>Estimate, not a forecast. It assumes nobody adds or removes liquidity, the fee uplift f stays at today’s {S?.f ? S.f.toFixed(2) : '—'} (it varies with trading volume), and MSTR stays at {S ? fmt(S.stockUsd) : '—'}. The curve is in MSTR terms, so a change in MSTR’s price shifts it. The launch range ends near {S ? lab(S.rangeTopMcapStock * S.stockUsd) : '$1.27B'}; above that a second range takes over and this model stops. Pool MSTR is the pool’s inventory, not a redemption right. BTC uses Strategy’s gross BTC per share from the latest 8-K.</F>
   </Panel>;
 }

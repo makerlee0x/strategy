@@ -5,9 +5,6 @@ export const dynamic = 'force-dynamic';
 const T = t => Math.pow(1.0001, t);
 const COINS = [
   { key: 'STRATEGY', stock: 'MSTR', pair: '0xa6975f4720a95aa9cdfa9b010a065b0e941534c93f9fa708104c08f0ac029ca0', tokenIs0: true, lo: -157672, hi: -47232, L: 375129.362198234609, L2: 848523.625770020674 },
-  { key: 'AI', stock: 'NVDA', pair: '0xcbdfea90430a30ee4469c9902e120a77e7c7e4711d5643671c1d1957f2f1ce27', tokenIs0: true, lo: -161728, hi: -51296, L: 306274.781544203373 },
-  { key: 'BONER', stock: 'HIMS', pair: '0x9c89b04303dfa76f3f6fb02c2b77be0e8a00ab8fa00d507119acd54ab3e8640d', tokenIs0: true, lo: -142408, hi: -31976, L: 804671.710448648329 },
-  { key: 'MEME', stock: 'AMC', pair: '0x27ccf0a6d1ee74840220715bcca7d3b01e0d33aa30d0259b47ae1585b3f4c071', tokenIs0: false, lo: 7016, hi: 117448, L: 2802793.802444906584 },
 ];
 const SUPPLY = 1e9;
 async function one(c) {
@@ -35,7 +32,7 @@ export async function GET(req) {
       const rs = await Promise.allSettled(COINS.map(one));
       const coins = rs.map((r, i) => r.status === 'fulfilled' ? r.value : { key: COINS[i].key, stock: COINS[i].stock, error: true });
       if (coins[0].error) throw new Error('strategy pair unavailable');
-      return { ok: true, source: 'dexscreener + onchain launch ranges', supply: SUPPLY, fetchedAt: new Date().toISOString(), strategy: coins[0], others: coins.slice(1) };
+      return { ok: true, source: 'dexscreener + onchain launch ranges', supply: SUPPLY, fetchedAt: new Date().toISOString(), strategy: coins[0] };
     });
     return json(value, { origin, sMaxAge: 60, swr: 300, headers: { 'X-Cache': cache } });
   } catch (_) {
