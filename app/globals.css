@@ -74,3 +74,4 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
   .newsrow{flex-wrap:wrap}.newsrow>span{min-width:0;overflow-wrap:anywhere}.newsrow>span.k{white-space:normal!important;flex-basis:100%;padding-left:36px}
   .cardwrap{overflow-x:auto}.heromark{width:96px;height:96px}
 }
+.g4.tight>div{padding:14px 16px}

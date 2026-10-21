@@ -34,5 +34,7 @@ if (prevSnap) cpSync(join(OUT, 'snapshot'), prevSnap, { recursive: true });
 for (const f of readdirSync(OUT).filter(f => f !== '.git')) rmSync(join(OUT, f), { recursive: true });
 cpSync(join(W, 'out'), OUT, { recursive: true });
 cpSync(SNAP || prevSnap, join(OUT, 'snapshot'), { recursive: true });
+// No history store in the static preview: use the same placeholder history the API returns without KV
+if (!existsSync(join(OUT, 'snapshot/strategy-history.json'))) { const { sampleHistory } = await import(join(ROOT, 'lib/metrics.mjs')); writeFileSync(join(OUT, 'snapshot/strategy-history.json'), JSON.stringify({ ok: true, sample: true, source: 'placeholder', fetchedAt: new Date().toISOString(), days: sampleHistory() })); }
 writeFileSync(join(OUT, '.nojekyll'), '');
 console.log('Preview built in', OUT);

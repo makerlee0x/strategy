@@ -9,5 +9,14 @@ export default function P(){const d=useLive('/api/robinhood-mstr');const [F8,OH]
 <Panel t="4 · What backs one token"><p className="sub" style={{fontSize:14}}>Each MSTR token tracks one Strategy share, and each share has a slice of the bitcoin Strategy holds.</p></Panel><Backing F8={F8} coin={false}/>
 <OffHours OH={OH}/>
 <Quotes/>
+<div id="metrics" style={{scrollMarginTop:16}}><Panel t="5 · How the STRATEGY metrics work"><table><tbody>{[
+['MSTR holdings','MSTR in the STRATEGY/MSTR pool on Robinhood Chain, plus the Strategy Coin treasury once it exists. Pool MSTR is the pool’s inventory, not a redemption right.'],
+['MSTR per 1M STRATEGY','MSTR holdings ÷ 1B coins × 1M. The coin’s version of Strategy’s BTC per share.'],
+['Sats per 1M STRATEGY','MSTR per 1M STRATEGY × Strategy’s sats per share (latest 8-K BTC ÷ latest 10-Q/10-K share count). Gross of Strategy’s debt and preferred.'],
+['mNAV','STRATEGY market cap ÷ (MSTR holdings × MSTR price). Above 1× means the market values the coin above the MSTR behind it.'],
+['MSTR from fees','Pool MSTR minus what the launch curve alone would hold at today’s price. The pool is single-sided at launch, so MSTR on the curve came in from buyers; MSTR above it came from trading fees.'],
+['MSTR Yield','MSTR added by fees (and, later, treasury buys) over a period ÷ MSTR holdings at the start. MSTR that came in because the price went up is not counted. Shown for 30 days, quarter-to-date and year-to-date.'],
+['History','One snapshot per day (00:05 UTC). Until enough days are stored, yield and charts use placeholder data marked SAMPLE.']
+].map(([a,b])=><tr key={a}><td style={{width:200}}><b>{a}</b></td><td style={{whiteSpace:'normal'}}>{b}</td></tr>)}</tbody></table></Panel></div>
 <Panel t="Good to know"><p className="sub">Tokens give price exposure, not shareholder votes. Most issuers exclude US persons. Check each issuer’s terms.</p></Panel>
 <Panel t="Resources · the index"><table><thead><tr><th>Ref</th><th>Name</th><th>Address</th></tr></thead><tbody>{RESOURCES.map(([a,b],i)=><tr key={a}><td style={{color:'#d9232e'}}>R-{String(i+1).padStart(3,'0')}</td><td><a href={b} target="_blank" rel="noopener"><b>{a}</b></a></td><td>{b.replace('https://','')}</td></tr>)}</tbody></table></Panel></>)}
