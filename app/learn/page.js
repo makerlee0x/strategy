@@ -1,5 +1,5 @@
 'use client';
-import {num} from '../data';import {Panel} from '../ui';import {useLive} from '../../lib/useLive';import {Backing,OffHours,Quotes} from '../backing';
+import {num,RESOURCES} from '../data';import {Panel} from '../ui';import {useLive} from '../../lib/useLive';import {Backing,OffHours,Quotes} from '../backing';
 const steps=[['Buy share','A market maker buys real MSTR shares at a broker.'],['Mint','The issuer locks the shares and creates the same number of tokens.'],['Trade','Tokens trade 24/7 on-chain — anyone can buy from the market.'],['Burn','To exit, the market maker returns tokens; they are destroyed and the shares released.']];
 export default function P(){const d=useLive('/api/robinhood-mstr');const [F8,OH]=useLive(['/api/strategy-filings','/api/offhours']);const rh={supply:d?.supply,uiMultiplier:d?.uiMultiplier,mint:{tokens:d?.mintBurn?.minted},burn:{tokens:d?.mintBurn?.burned}};return(<><div className="eyebrow">File 004 — Learn</div><h1 className="d">How it <em>works</em>.</h1><p className="sub" style={{fontSize:15}}>Three ideas. Two minutes.</p>
 <Panel t="1 · Where tokens come from"><div className="g4">{steps.map(([a,b],i)=><div key={a}><div className="stamp">{String(i+1).padStart(2,'0')}</div><div className="d" style={{fontSize:22}}>{a}</div><div className="sub">{b}</div></div>)}</div>
@@ -9,4 +9,5 @@ export default function P(){const d=useLive('/api/robinhood-mstr');const [F8,OH]
 <Panel t="4 · What backs one token"><p className="sub" style={{fontSize:14}}>Each MSTR token tracks one Strategy share, and each share has a slice of the bitcoin Strategy holds.</p></Panel><Backing F8={F8} coin={false}/>
 <OffHours OH={OH}/>
 <Quotes/>
-<Panel t="Good to know"><p className="sub">Tokens give price exposure, not shareholder votes. Most issuers exclude US persons. Check each issuer’s terms.</p></Panel></>)}
+<Panel t="Good to know"><p className="sub">Tokens give price exposure, not shareholder votes. Most issuers exclude US persons. Check each issuer’s terms.</p></Panel>
+<Panel t="Resources · the index"><table><thead><tr><th>Ref</th><th>Name</th><th>Address</th></tr></thead><tbody>{RESOURCES.map(([a,b],i)=><tr key={a}><td style={{color:'#d9232e'}}>R-{String(i+1).padStart(3,'0')}</td><td><a href={b} target="_blank" rel="noopener"><b>{a}</b></a></td><td>{b.replace('https://','')}</td></tr>)}</tbody></table></Panel></>)}

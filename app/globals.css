@@ -61,3 +61,16 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 .news{display:flex;flex-direction:column}.newsrow{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule);text-decoration:none;color:inherit;line-height:1.5}.newsrow:hover{background:#d9232e0d}
 .sw-warn{border:1px solid var(--red);color:var(--red);padding:8px 10px;font-size:12px;background:#d9232e10}
 .sw-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sw-picker .mopt{flex-direction:column;align-items:flex-start;margin:0}
+.subtabs{display:flex;gap:0;border:1px solid var(--ink);width:max-content;max-width:100%;margin-bottom:18px}.subtabs a{padding:8px 14px;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;font-size:11px}.subtabs a+a{border-left:1px solid var(--ink)}.subtabs a.on{background:var(--ink);color:var(--paper)}
+.jump{display:flex;flex-wrap:wrap;border:1px solid var(--ink);background:var(--paper);margin:18px 0}.jump a{flex:1;min-width:150px;padding:12px 14px;text-decoration:none;text-transform:uppercase;letter-spacing:.08em;font-size:12px;border-right:1px solid var(--rule)}.jump a:hover{background:var(--red);color:var(--paper)}.jump span{color:var(--red)}.jump a:hover span{color:var(--paper)}
+.goal{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:40px 0 4px;padding-top:18px;border-top:2px solid var(--ink);scroll-margin-top:16px}
+.risk{margin-top:8px;font-size:12px;line-height:1.5;border-left:3px solid var(--red);padding-left:10px;max-width:720px}
+.tokgrid{display:grid;grid-template-columns:220px 1fr;gap:16px}
+@media(max-width:700px){
+  main{padding:20px 16px}.top{padding:8px 16px}.top span:nth-child(2){display:none}nav{padding:0 16px}nav a.l{padding:14px 12px;white-space:nowrap}
+  .panel table{display:block;overflow-x:auto;white-space:nowrap}.addr{white-space:nowrap}
+  .big{font-size:44px}.stamp{font-size:30px}.g4>div{border-right:0;border-bottom:1px solid var(--rule)}.hero-chain>div+div{border-left:0;border-top:1px solid var(--ink)}
+  .tokgrid{grid-template-columns:1fr}.hb{grid-template-columns:96px 1fr 70px}.goal{grid-template-columns:44px 1fr}
+  .newsrow{flex-wrap:wrap}.newsrow>span{min-width:0;overflow-wrap:anywhere}.newsrow>span.k{white-space:normal!important;flex-basis:100%;padding-left:36px}
+  .cardwrap{overflow-x:auto}.heromark{width:96px;height:96px}
+}
