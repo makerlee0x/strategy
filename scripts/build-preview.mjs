@@ -21,11 +21,11 @@ rmSync(join(W, 'app/api'), { recursive: true });
 edit(join(W, 'lib/useLive.js'), s => s.replace("fetch(u,", `fetch('${BASE}/snapshot/' + u.replace(/^\\/api\\//, '').replace(/[?&=]/g, '_') + '.json',`));
 // Internal links and images → githack paths
 for (const f of walk(join(W, 'app')).filter(f => f.endsWith('.js'))) edit(f, s => s
-  .replace(/(href|src)="\/([^"]*)"/g, (m, a, p) => `${a}="${BASE}/${p}${p === '' || p.endsWith('/') ? 'index.html' : ''}"`));
+  .replace(/(href|src)="\/([^"]*)"/g, (m, a, p) => `${a}="${BASE}/${p.replace(/^(#|$)/, 'index.html$1').replace(/\/(#|$)/, '/index.html$1')}"`));
 // Footer stamp so the preview never passes for live data
 const snapDir = SNAP || join(OUT, 'snapshot'), at = JSON.parse(readFileSync(join(snapDir, 'strategy-metrics.json'), 'utf8')).fetchedAt;
 const stamp = at ? new Date(at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }) + ' CT' : 'date unknown';
-edit(join(W, 'app/layout.js'), s => s.replace('<span>Strategy Coin · Compendium No. 001</span>', `<span>Preview · data snapshot ${stamp}</span>`));
+edit(join(W, 'app/layout.js'), s => s.replace('<span>Strategy Coin · @strategystock</span>', `<span>Preview · data snapshot ${stamp}</span>`));
 edit(join(W, 'next.config.js'), s => s.replace('module.exports = {', `module.exports = {\n  output: 'export', trailingSlash: true, assetPrefix: '${CDN}',`).replace(/async headers\(\) \{[\s\S]*?\n  \}\n/, ''));
 
 execSync('npx next build', { cwd: W, stdio: 'inherit' });
