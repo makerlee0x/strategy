@@ -89,7 +89,9 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.ticker>div{animation:none}}
 .layer{padding:24px;box-shadow:6px 6px 0 var(--red)}.layer .d{font-size:34px;margin:8px 0}
-.sec-h{font-family:'Bungee',sans-serif;font-weight:400;font-size:44px;margin:64px 0 10px;text-shadow:none;line-height:1.05}
+.sec-h{font-family:'Bungee',sans-serif;font-weight:400;font-size:44px;margin:72px 0 10px;text-shadow:none;line-height:1.05;border:0;padding:0;display:block;letter-spacing:0;text-transform:uppercase}
+.stat .k{font-weight:700}.stat b{display:block;font-family:'Bungee',sans-serif;font-weight:400;font-size:40px;line-height:1.1}
+.chips2{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.chips2 span{font-size:11px;font-weight:700;padding:5px 9px}
 .tilt{background:var(--ink);color:var(--bg);width:100%;max-width:360px;padding:24px;transform:rotate(2.5deg);box-shadow:10px 10px 0 var(--red)}
 @media(max-width:760px){
   .g2,.g3,.g4,.cells,.redblock,.hero-chain{grid-template-columns:1fr!important}h1{font-size:44px!important}
