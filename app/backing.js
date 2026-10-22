@@ -1,45 +1,22 @@
 'use client';
 import { fmt, num, St } from './data'; import { Panel } from './ui'; import { QUOTES } from './quotes';
-const sats = n => n == null || !Number.isFinite(n) ? '—' : n >= 100 ? Math.round(n).toLocaleString('en-US') : n.toFixed(n >= 1 ? 2 : 3);
 const dt = s => s ? new Date(s + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 const F = ({ children }) => <div className="k" style={{ marginTop: 8, textTransform: 'none', letterSpacing: 0 }}>{children}</div>;
 
-/** Strategy's BTC + USD reserve from the latest 8-K. */
+/** Strategy's bitcoin from the latest 8-K. */
 export function ReserveCard({ F8 }) {
   const L = F8?.latest, ch = F8?.weeklyChangeBtc;
-  return <Panel t="Strategy reserve · latest 8-K" r={<St d={F8} s="SEC EDGAR" />}><div className="g4">
-    <div><div className="k">Bitcoin held</div><div className="big">{L ? num(L.btcHeld) : '—'}</div><div className="say">{L ? `as of ${L.asOf}` : ''}</div></div>
-    <div><div className="k">Change vs prior 8-K</div><div className="big red">{ch == null ? '—' : (ch >= 0 ? '+' : '') + num(ch)}</div><div className="say">{F8?.previous ? `since ${F8.previous.asOf}` : ''}</div></div>
-    <div><div className="k">USD reserve + cash</div><div className="big">{L?.usdReserve != null ? fmt(L.usdReserve + (L.usdCash || 0)) : '—'}</div><div className="say">{L?.usdReserve != null ? `reserve ${fmt(L.usdReserve)} · cash ${fmt(L.usdCash)}` : ''}</div></div>
-    <div><div className="k">Average cost</div><div className="big">{L ? '$' + num(L.avgCostUsd) : '—'}</div><div className="say">{L ? <a href={L.doc} target="_blank" rel="noopener">8-K filed {dt(F8.latest.filingDate)} ↗</a> : ''}</div></div></div></Panel>;
+  return <Panel t="Strategy's bitcoin · latest 8-K" r={<St d={F8} s="SEC EDGAR" />}><div className="g2" style={{ gridTemplateColumns: '1fr 1fr', gap: 0 }}>
+    <div style={{ padding: 6 }}><div className="k">Bitcoin held</div><div className="big">{L ? num(L.btcHeld) : '—'}</div><div className="say">{L ? `as of ${L.asOf}` : ''}</div></div>
+    <div style={{ padding: 6 }}><div className="k">Change vs prior 8-K</div><div className="big red">{ch == null ? '—' : (ch >= 0 ? '+' : '') + num(ch)}</div><div className="say">{F8?.previous ? `since ${F8.previous.asOf}` : ''}{L ? <> · <a href={L.doc} target="_blank" rel="noopener">8-K filed {dt(L.filingDate)} ↗</a></> : ''}</div></div></div></Panel>;
 }
-/** Sats of Strategy BTC per 1 MSTR share/token, and per STRATEGY coin. */
-export function Backing({ F8, SM, coin = true, token = true }) {
-  const R = SM?.raw || {}, bps = F8?.btcPerShare, sh = F8?.shares;
-  const supply = R.strategySupply || R.totalSupply, mpc = R.mstrInLp != null && supply ? R.mstrInLp / supply : null;
-  const satsCoin = mpc != null && bps != null ? mpc * bps * 1e8 : null;
-  return <div className={coin && token ? 'g2' : ''}>
-    {token && <Panel t="Bitcoin behind 1 MSTR token" r={<St d={F8} s="SEC EDGAR" />}><div className="stamp" style={{ fontSize: 46 }}>{sats(F8?.satsPerShare)} <span style={{ fontSize: 18 }}>sats</span></div><div className="say">≈ {bps != null ? bps.toFixed(6) : '—'} BTC of Strategy’s bitcoin per share. One MSTR token tracks one share.</div>
-      <F>Formula: {F8?.latest ? num(F8.latest.btcHeld) : '—'} BTC (8-K, {F8?.latest?.asOf || '—'}) ÷ {sh ? num(sh.total) : '—'} shares (class A + B, {sh?.form || '10-Q'} cover, {sh?.asOf || '—'}). Gross: before Strategy’s debt and preferred claims; shares issued since the cover date are not included.</F></Panel>}
-    {coin && <Panel t="Backing per STRATEGY coin" r={<St d={SM} s="STS + SEC" />}><div className="g2" style={{ gridTemplateColumns: '1fr 1fr' }}><div><div className="k">MSTR per 1M coins</div><div className="stamp" style={{ fontSize: 40 }}>{mpc != null ? (mpc * 1e6).toFixed(2) : '—'}</div></div><div><div className="k">Sats per 1M coins</div><div className="stamp" style={{ fontSize: 40, color: 'var(--red-t)' }}>{satsCoin != null ? num(satsCoin * 1e6) : '—'}</div></div></div>
-      <F>MSTR per coin = MSTR in the STRATEGY/MSTR pool ({R.mstrInLp != null ? '≈' + num(R.mstrInLp) : '—'}) ÷ total supply ({supply ? (supply / 1e9).toFixed(2) + 'B' : '—'}). Sats per coin = MSTR per coin × {sats(F8?.satsPerShare)} sats per MSTR. Pool MSTR comes from a rounded feed. It is the pool’s inventory, not a redemption right.</F></Panel>}
-  </div>;
-}
-/** Share of tokenized-MSTR volume traded while Nasdaq is closed. */
-export function OffHours({ OH, compact }) {
-  const a = OH?.all, s = OH?.spot, p = OH?.perp, pc = x => x?.closedPct != null ? x.closedPct.toFixed(0) + '%' : '—';
-  if (compact) return <Panel t="24/7 · traded while Nasdaq is closed" r={<St d={OH} s="GECKOTERMINAL + HYPERLIQUID" />}><div className="g2" style={{ gridTemplateColumns: '1fr 1.4fr', alignItems: 'center' }}>
-    <div><div className="k">All venues · 30 days</div><div className="big red">{pc(a?.d30)}</div><div className="say">of {fmt(a?.d30?.totalUsd)} in tokenized-MSTR volume traded while Nasdaq was closed.</div></div>
-    <table><tbody>{[['All venues · 7 days', pc(a?.d7), 'of ' + fmt(a?.d7?.totalUsd)], ['DEX spot · 30 days', pc(s?.d30), 'Robinhood and Solana pools'], ['Perps · 30 days', pc(p?.d30), 'Hyperliquid xyz:MSTR']].map(([k, v, n]) => <tr key={k}><td>{k}</td><td><b>{v}</b></td><td className="k" style={{ textTransform: 'none', letterSpacing: 0 }}>{n}</td></tr>)}</tbody></table></div>
-    <F>Nasdaq is closed {OH?.closedHoursPct30 != null ? OH.closedHoursPct30.toFixed(0) + '%' : '—'} of the hours in a month. Method on /learn.</F></Panel>;
-  return <Panel t="24/7 · traded while Nasdaq is closed" r={<St d={OH} s="GECKOTERMINAL + HYPERLIQUID" />}><div className="g4">
-    <div><div className="k">All venues · 30 days</div><div className="big red">{pc(a?.d30)}</div><div className="say">of {fmt(a?.d30?.totalUsd)} volume</div></div>
-    <div><div className="k">All venues · 7 days</div><div className="big">{pc(a?.d7)}</div><div className="say">of {fmt(a?.d7?.totalUsd)}</div></div>
-    <div><div className="k">DEX spot · 30d</div><div className="big">{pc(s?.d30)}</div><div className="say">Robinhood and Solana pools</div></div>
-    <div><div className="k">Perps · 30d</div><div className="big">{pc(p?.d30)}</div><div className="say">Hyperliquid xyz:MSTR</div></div></div>
-    {!compact && <><table style={{ marginTop: 14 }}><thead><tr><th>Venue</th><th>30d volume</th><th>Closed-hours share</th></tr></thead><tbody>{(OH?.venues || []).map(v => <tr key={v.name}><td>{v.name}</td><td>{v.error ? 'unavailable' : fmt(v.d30.totalUsd)}</td><td>{v.error ? '—' : pc(v.d30)}</td></tr>)}</tbody></table>
-    <F>Method: hourly volume; each hour weighted by the part inside Nasdaq’s regular session (9:30–16:00 ET, Mon–Fri, excluding NYSE holidays; 13:00 early closes). For reference, the market is closed {OH?.closedHoursPct30 != null ? OH.closedHoursPct30.toFixed(0) + '%' : '—'} of all hours.</F></>}
-    {compact && <F>Nasdaq is closed {OH?.closedHoursPct30 != null ? OH.closedHoursPct30.toFixed(0) + '%' : '—'} of the hours in a month. Method on /learn.</F>}</Panel>;
+/** Share of tokenized-MSTR volume traded while Nasdaq is closed (30 days, all venues). */
+export function OffHours({ OH }) {
+  const a = OH?.all;
+  return <Panel t="24/7 · traded while Nasdaq is closed" r={<St d={OH} s="GECKOTERMINAL + HYPERLIQUID" />}>
+    <div className="big red" style={{ fontSize: 72 }}>{a?.d30?.closedPct != null ? a.d30.closedPct.toFixed(0) + '%' : '—'}</div>
+    <div className="say">of {fmt(a?.d30?.totalUsd)} in tokenized-MSTR volume over 30 days traded while Nasdaq was closed.</div>
+    <F>Nasdaq is closed {OH?.closedHoursPct30 != null ? OH.closedHoursPct30.toFixed(0) + '%' : '—'} of the hours in a month. Hourly volume, weighted by the part of each hour outside Nasdaq's regular session.</F></Panel>;
 }
 /** "In his words" quote strip. Verified quotes only. */
 export function Quotes({ n = QUOTES.length }) {
@@ -54,22 +31,11 @@ export function Collateral({ C }) {
 }
 
 /** Robinhood volume vs Solana TVL — use vs money sitting idle. All chains listed. */
-const TENEV = { q: 'Robinhood Chain exists to make real world assets programmable, globally portable, and always available, with the product quality you\u2019ve come to expect from Robinhood.', d: '2026-07-16', url: 'https://x.com/vladtenev/status/2077814433762451646' };
+
+/** Where tokenized MSTR trades: 24h DEX volume by chain, chains with trades only. */
 export function ChainActivity({ CH }) {
-  const L = CH?.chains || [], c = Object.fromEntries(L.map(x => [x.key, x])), rh = c.robinhood, so = c.solana;
-  const x = rh?.vol24Usd && so?.vol24Usd ? rh.vol24Usd / so.vol24Usd : null;
-    const lead = rh?.rank == null ? null : rh.rank === 1 ? `Robinhood Chain leads on DEX volume among the chains listed${x ? `, out-trading Solana ${x.toFixed(1)}×` : ''}.` : `Robinhood Chain is #${rh.rank} by 24h DEX volume among the chains listed${x ? ` and out-trades Solana ${x.toFixed(1)}×` : ''}.`;
-  const cell = v => v == null ? '—' : fmt(v);
-  const idle = y => !y.error && !y.noDexData && !y.vol24Usd && !y.defiTvlUsd && y.key !== 'robinhood', rows = L.filter(y => !idle(y)), quiet = L.filter(idle);
-  return <Panel t="Where MSTR trades · volume first" r={<St d={CH} s="GECKOTERMINAL + DEFILLAMA" />}><div className="g2">
-    <div style={{ border: '2px solid #d9232e', padding: 16 }}><span className="pill">Primary signal · use</span><div className="d" style={{ fontSize: 28, margin: '10px 0 4px' }}>Robinhood Chain</div>
-      <div className="k">24h DEX volume{rh?.rank ? ` · rank #${rh.rank}` : ''}</div><div className="stamp" style={{ fontSize: 48, color: 'var(--red-t)' }}>{fmt(rh?.vol24Usd)}</div>
-      <div className="say">{lead || 'Loading…'} DEX liquidity {fmt(rh?.dexLiquidityUsd)}. Volume is money that changed hands, so it’s the best sign of real use.</div>
-      <a href={TENEV.url} target="_blank" rel="noopener" style={{ display: 'block', marginTop: 12, borderLeft: '3px solid #d9232e', paddingLeft: 10, textDecoration: 'none', color: 'var(--ink)' }}>“{TENEV.q}”<div className="k" style={{ marginTop: 4 }}>Vlad Tenev, Robinhood CEO · Jul 16, 2026 · X ↗</div></a></div>
-    <div style={{ border: '1px solid var(--rule)', padding: 16 }}><span className="pill" style={{ background: 'var(--ink)', color: 'var(--bg)' }}>Secondary · parked capital</span><div className="d" style={{ fontSize: 28, margin: '10px 0 4px' }}>Solana</div>
-      <div className="k">DeFi TVL (lending + pools)</div><div className="stamp" style={{ fontSize: 48 }}>{fmt(so?.defiTvlUsd)}</div>
-      <div className="say">24h DEX volume {fmt(so?.vol24Usd)}. High TVL can sit unused: lending and pool deposits that rarely trade. Volume shows activity; TVL doesn’t.</div></div></div>
-    {rows.length > 0 && <table style={{ marginTop: 14 }}><thead><tr><th>#</th><th>Chain</th><th>24h volume</th><th>Share</th><th>DEX liquidity</th><th>DeFi TVL</th></tr></thead><tbody>{rows.map(y => <tr key={y.key} style={y.key === 'robinhood' ? { background: 'rgba(217,35,46,.08)' } : undefined}><td style={{ color: 'var(--red-t)' }}>{y.rank ? String(y.rank).padStart(2, '0') : '—'}</td><td><b>{y.chain}</b>{y.key === 'robinhood' ? ' · featured' : ''}</td><td>{y.error ? 'unavailable' : y.noDexData ? 'no DEX data' : cell(y.vol24Usd)}</td><td>{y.volSharePct != null ? y.volSharePct.toFixed(y.volSharePct < 1 && y.volSharePct > 0 ? 1 : 0) + '%' : '—'}</td><td>{y.noDexData ? '—' : cell(y.dexLiquidityUsd)}</td><td>{y.defiTvlUsd != null ? fmt(y.defiTvlUsd) : (y.key === 'robinhood' ? 'not on DefiLlama' : '—')}</td></tr>)}</tbody></table>}
-    {quiet.length > 0 && <F>Also tracked, no trades in the last 24h: {quiet.map(y => y.chain).join(', ')}.</F>}
-    <F>Volume and DEX liquidity: GeckoTerminal 24h totals for every tokenized-MSTR contract on each chain. DeFi TVL: DefiLlama (DEX and lending pools with MSTR tokens); DefiLlama doesn’t list Robinhood Chain. “$0” means no trading was recorded; “—” means no data.</F></Panel>;
+  const L = (CH?.chains || []).filter(y => !y.error && !y.noDexData && y.vol24Usd > 0).slice(0, 5), quiet = (CH?.chains || []).filter(y => !L.includes(y)).map(y => y.chain);
+  return <Panel t="Where MSTR trades · 24h DEX volume" r={<St d={CH} s="GECKOTERMINAL" />}>
+    {L.length ? <table><thead><tr><th>#</th><th>Chain</th><th>24h volume</th><th>Share</th></tr></thead><tbody>{L.map((y, i) => <tr key={y.key} style={y.key === 'robinhood' ? { background: 'rgba(217,35,46,.12)' } : undefined}><td style={{ color: 'var(--red-t)' }}>{String(i + 1).padStart(2, '0')}</td><td><b>{y.chain}</b></td><td>{fmt(y.vol24Usd)}</td><td>{y.volSharePct != null ? y.volSharePct.toFixed(y.volSharePct < 1 ? 1 : 0) + '%' : '—'}</td></tr>)}</tbody></table> : <div className="k">Loading…</div>}
+    {quiet.length > 0 && <F>No trades in the last 24h: {quiet.join(', ')}.</F>}</Panel>;
 }

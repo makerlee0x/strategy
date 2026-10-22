@@ -16,8 +16,8 @@ export function EightKBanner({ k }) {
     <h2 className="d" style={{ fontSize: 52, lineHeight: 1.02, margin: '18px 0 26px', border: 0, padding: 0, display: 'block', letterSpacing: 0 }}>{headline(k)}</h2>
     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'stretch', gap: 14 }}>
       <Step k="STRATEGY HOLDS" v={num(k.btcHeld) + ' BTC'} d={signed(k.change) + (k.prevAsOf ? ' vs ' + k.prevAsOf.replace(/, \d{4}$/, '') : '')} /><Arrow />
-      <Step k="EVERY MSTR NOW HOLDS" v={num(k.satsPerShare) + ' SATS'} d={signed(k.dSatsPerShare) + ' sats per share'} /><Arrow />
-      <Step k="EVERY 1M STRATEGY NOW HOLDS" v={num(k.per1MSats) + ' SATS'} d={signed(k.dPer1MSats) + ' sats'} light /></div>
+      <Step k="MSTR" v="AMPLIFIED BTC" d="1 token tracks 1 share" /><Arrow />
+      <Step k="EVERY 1M STRATEGY HOLDS" v={(k.per1M != null ? k.per1M.toFixed(2) : '—') + ' MSTR'} d="amplified MSTR" light /></div>
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center', marginTop: 24 }}>
       <a className="btn" href="/8k/" style={{ marginTop: 0, background: 'var(--ink)', color: 'var(--bg)', boxShadow: '4px 4px 0 var(--bg)' }}>post the 8-K card</a>
       {k.doc && <a href={k.doc} target="_blank" rel="noopener" style={{ color: '#fff' }}>Read the 8-K ↗</a>}
@@ -36,7 +36,7 @@ export function EightKCard({ k }) {
       <div style={{ flex: '1 1 0', minWidth: 0 }}><div style={{ fontSize: 18, fontWeight: 700, letterSpacing: '.12em', color: 'var(--red-t)' }}>{k.change > 0 ? 'SAYLOR BOUGHT' : k.change < 0 ? 'STRATEGY SOLD' : 'NO NEW BTC'}</div>
         <div className="d" style={{ fontSize: 150, lineHeight: .95, marginTop: 8, textShadow: '6px 6px 0 var(--red)' }}>{signed(k.change)}</div><div className="d" style={{ fontSize: 56, lineHeight: 1 }}>BTC</div></div>
       <div style={{ flex: '1 1 0', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {box('STRATEGY HOLDS', num(k.btcHeld) + ' BTC')}{down}{box('EVERY MSTR HOLDS', num(k.satsPerShare) + ' SATS', signed(k.dSatsPerShare))}{down}{box('EVERY 1M $STRATEGY HOLDS', num(k.per1MSats) + ' SATS', signed(k.dPer1MSats), 1)}</div></div>
+        {box('STRATEGY HOLDS', num(k.btcHeld) + ' BTC')}{down}{box('MSTR', 'AMPLIFIED BTC')}{down}{box('EVERY 1M $STRATEGY HOLDS', (k.per1M != null ? k.per1M.toFixed(2) : '—') + ' MSTR', null, 1)}</div></div>
     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'var(--mu)' }}><span style={{ color: 'var(--ink)', fontWeight: 700 }}>strategycoin.io</span><span>Source: SEC EDGAR 8-K · Not affiliated with Strategy Inc.</span></div>
   </div>;
 }

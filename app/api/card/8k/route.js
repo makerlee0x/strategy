@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 // 1200×675 8-K day card (the /8k share image). Same layout as EightKCard in app/eightk.js.
 // ?demo=1 renders labelled sample data, for checking the design without live sources.
 const C = { bg: '#1c0809', panel: '#3a1416', ink: '#f3e6dc', mu: '#c7aaa3', red: '#d9232e', redT: '#ff5a63' };
-const DEMO = { filingDate: '2026-10-13', btcHeld: 848250, change: 250, satsPerShare: 220769, dSatsPerShare: 65.07, per1MSats: 303163, dPer1MSats: 89.1 };
+const DEMO = { filingDate: '2026-10-13', btcHeld: 848250, change: 250, per1M: 1.37 };
 const num = v => v == null ? '—' : Math.round(v).toLocaleString('en-US');
 const day = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
 
@@ -54,7 +54,7 @@ export async function GET(req) {
           <div style={{ ...D, fontSize: 150, lineHeight: 1, marginTop: 8, textShadow: `6px 6px 0 ${C.red}` }}>{signed(k.change)}</div>
           <div style={{ ...D, fontSize: 56, lineHeight: 1 }}>BTC</div></div>
         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, marginLeft: 48 }}>
-          {box('STRATEGY HOLDS', num(k.btcHeld) + ' BTC')}{down}{box('EVERY MSTR HOLDS', num(k.satsPerShare) + ' SATS', signed(k.dSatsPerShare))}{down}{box('EVERY 1M $STRATEGY HOLDS', num(k.per1MSats) + ' SATS', signed(k.dPer1MSats), 1)}</div></div>
+          {box('STRATEGY HOLDS', num(k.btcHeld) + ' BTC')}{down}{box('MSTR', 'AMPLIFIED BTC')}{down}{box('EVERY 1M $STRATEGY HOLDS', (k.per1M != null ? k.per1M.toFixed(2) : '—') + ' MSTR', null, 1)}</div></div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: C.mu }}><span style={{ color: C.ink }}>strategycoin.io</span><span>Source: SEC EDGAR 8-K · Not affiliated with Strategy Inc.</span></div>
     </div>,
     { width: 1200, height: 675, fonts: F.length ? F : undefined, headers: { 'Cache-Control': demo ? 'no-store' : 'public, max-age=0, s-maxage=1800, stale-while-revalidate=3600' } });
