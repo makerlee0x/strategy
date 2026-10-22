@@ -1,0 +1,35 @@
+'use client';
+import { fmt, num, St } from '../data'; import { Panel } from '../ui'; import { useLive } from '../../lib/useLive'; import { EARN } from '../feeds'; import { Collateral } from '../backing';
+const MIN_TVL = 25_000, APY_FLAG = 100, LEND = /lend|lending|morpho|aave|compound|euler|spark/i;
+const GOALS = [['fees', 'Earn fees'], ['lend', 'Lend'], ['borrow', 'Borrow'], ['hedge', 'Hedge & trade 24/7']];
+const Goal = ({ id, n, t, sub, risk }) => <div id={id} className="goal"><div className="stamp" style={{ fontSize: 30, margin: 0 }}>{n}</div><div><div className="d" style={{ fontSize: 30 }}>{t}</div><p className="sub" style={{ margin: '4px 0 0' }}>{sub}</p><div className="risk"><b>Risk:</b> {risk}</div></div></div>;
+/** APY cell: flags APY that usually comes from short-term rewards or a thin pool. */
+const Apy = ({ p }) => p.apy == null ? '—' : p.apy > APY_FLAG ? <>{p.apy}% <span className="tag sample" title="Usually short-term rewards or a thin pool; unlikely to last">CHECK</span></> : p.apy + '%';
+/** What 10 MSTR (at today's price) would earn in a year at the pool's current APY. */
+const Ten = ({ p, px }) => p.apy == null || px == null || p.apy > APY_FLAG ? '—' : 10 * px * p.apy / 100 < 1 ? '<$1' : fmt(10 * px * p.apy / 100);
+function PoolTable({ rows, px, hidden }) {
+  return <><table><thead><tr><th>Pool</th><th>Protocol</th><th>Chain</th><th>TVL</th><th>APY</th><th>10 MSTR / yr</th></tr></thead><tbody>{rows.slice(0, 20).map(p => <tr key={p.pool}><td><b>{p.symbol}</b></td><td>{p.project}</td><td>{p.chain}</td><td>{fmt(p.tvlUsd)}</td><td><Apy p={p} /></td><td>{p.apy ? <Ten p={p} px={px} /> : '—'}</td></tr>)}{!rows.length && <tr><td colSpan={6} className="k">No pools above {fmt(MIN_TVL)} right now.</td></tr>}</tbody></table>
+    <div className="k" style={{ marginTop: 8, textTransform: 'none', letterSpacing: 0 }}>Pools with at least {fmt(MIN_TVL)} TVL{hidden ? ` (${hidden} smaller hidden)` : ''}. APY from DefiLlama, often annualized from a short window, so it moves. “CHECK” marks APY over {APY_FLAG}%, which usually comes from short-term rewards or a thin pool; we don’t estimate earnings for those. “10 MSTR / yr” = 10 × MSTR price{px ? ` ($${px.toFixed(2)})` : ''} × APY.</div></>;
+}
+export default function View({ init }) {
+  const [D, PP, T, C] = useLive(EARN, undefined, init);
+  const prices = (T?.tokens || []).map(t => t.price).filter(Number.isFinite).sort((a, b) => a - b), px = prices.length ? prices[prices.length >> 1] : null;
+  const all = D?.pools || [], big = all.filter(p => p.tvlUsd >= MIN_TVL), lp = big.filter(p => !LEND.test(p.project)), lend = big.filter(p => LEND.test(p.project));
+  return (<><div className="eyebrow">File 002 — Earn · live</div><h1 className="d">Put <em>MSTR</em> to work.</h1><p className="sub">Tokenized MSTR can do more than sit in a wallet. Four things you can do with it, each with what it pays and what can go wrong.</p>
+    <div className="jump">{GOALS.map(([id, t], i) => <a key={id} href={'#' + id}><span>{String(i + 1).padStart(2, '0')}</span> {t}</a>)}</div>
+
+    <Goal id="fees" n="01" t="Earn fees" sub="Provide liquidity: pair MSTR with another token in a pool and earn a share of every trade." risk="if MSTR moves a lot, the pool leaves you holding more of whichever side fell (impermanent loss). Fees change with trading volume." />
+    <Panel t="MSTR liquidity pools" r={<St d={D} s="DEFILLAMA" />}><PoolTable rows={lp} px={px} hidden={all.filter(p => !LEND.test(p.project)).length - lp.length} /></Panel>
+
+    <Goal id="lend" n="02" t="Lend" sub="Supply MSTR to a lending market. Borrowers post it as collateral or borrow it; you earn the supply rate." risk="the rate can be 0% when nobody borrows, and a fast crash can leave bad debt in the market." />
+    <Panel t="Kamino · Solana" r={<St d={D} s="DEFILLAMA" />}><div className="g2"><div><div className="d" style={{ fontSize: 26 }}>Kamino Lend</div><p className="sub">Supply MSTRx (xStocks) to Kamino Lend on Solana. It is the largest MSTR lending market today.</p><a className="btn" href="https://kamino.finance/" target="_blank" rel="noopener">Open Kamino ↗</a></div><div><div className="k">MSTRx supplied</div><div className="stamp">{fmt(D?.kamino?.tvlUsd)}</div><div className="k">Supply APY {D?.kamino?.apy != null ? D.kamino.apy + '%' : '—'}</div></div></div></Panel>
+    {lend.length > 1 && <Panel t="Other MSTR lending markets" r={<St d={D} s="DEFILLAMA" />}><PoolTable rows={lend.filter(p => p.project !== 'kamino-lend')} px={px} /></Panel>}
+
+    <Goal id="borrow" n="03" t="Borrow" sub="Keep your MSTR and borrow stablecoins against it." risk="if MSTR falls past the liquidation level, your collateral is sold. Fixed-term loans still have to be repaid on time." />
+    <Panel t="Teller · Robinhood Chain" r={<St d={D} s="DEFILLAMA" />}><div><div className="d" style={{ fontSize: 26 }}>Teller</div><p className="sub">Use Robinhood MSTR (and STRATEGY) as collateral for a fixed-term stablecoin loan with no margin calls during the term (<a href="https://x.com/useteller/status/2101343754179547518">@useteller</a>).</p><a className="btn" href="https://pro.teller.org/borrow?collateral=mstr" target="_blank" rel="noopener">Open Teller ↗</a></div></Panel>
+    <Collateral C={C} />
+
+    <Goal id="hedge" n="04" t="Hedge & trade 24/7" sub="Perpetual futures on MSTR trade around the clock, including nights and weekends when Nasdaq is closed." risk="perps use leverage and charge funding; a position can be liquidated. They track MSTR’s price but are not shares." />
+    <Panel t="Perpetual futures on MSTR" r={<St d={PP} />}><table><thead><tr><th>Venue</th><th>Market</th><th>24h volume</th><th>Open interest</th></tr></thead><tbody>{(PP?.markets || []).map(m => <tr key={m.venue + m.market}><td>{m.venue}</td><td>{m.market}</td><td>{fmt(m.vol24Usd)}</td><td>{num(m.openInterest)} MSTR</td></tr>)}</tbody></table>
+      <div className="k" style={{ marginTop: 8, textTransform: 'none', letterSpacing: 0 }}>How much MSTR trades while Nasdaq is closed: <a href="/mstr/">MSTR On-Chain dashboard →</a></div></Panel></>);
+}
