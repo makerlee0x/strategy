@@ -74,8 +74,7 @@ export default function View({ init }) {
               </div>
               <div>
                 <div className="term-box"><h2>$STRATEGY</h2><div className="term-row" style={{ alignItems: 'flex-end' }}><span className="hi" style={{ fontSize: 44, lineHeight: 1 }}>{M.priceUsd || '—'}</span><span>{chg}</span></div></div>
-                <div className="term-box">{[['MSTR IN POOL', num(pool), 1], ['COMPOUNDED BY FEES', num(fee)], ['PER 1M $STRATEGY', n2(pool != null ? pool / 1e3 : null)], ['MSTR YIELD 30D', pc(S?.yield30d) + (H?.sample ? '*' : '')], ['MARKET CAP', M.marketCap || '—'], ['HOLDERS', M.holders || '—'], ['RESERVE', 'COMING SOON']].map(([k, v, h]) => <div key={k} className="term-row"><span className="dim">{k}</span><span className={h ? 'hi' : ''}>{v}</span></div>)}
-                  {H?.sample && <div className="dim" style={{ fontSize: 16, marginTop: 6 }}>* SAMPLE HISTORY</div>}</div>
+                <div className="term-box">{[['MARKET CAP', M.marketCap || '—', 1], ['MSTR IN POOL', num(pool), 1], ['LP TOTAL $', M.liquidityUsd || '—'], ['24H VOLUME', M.volume24h || '—'], ['HOLDERS', M.holders || '—'], ['RESERVE', 'COMING SOON']].map(([k, v, h]) => <div key={k} className="term-row"><span className="dim">{k}</span><span className={h ? 'hi' : ''}>{v}</span></div>)}</div>
               </div>
             </div>
             <div className="term-tick dim" aria-hidden="true"><div>{[0, 1].map(k => <span key={k}>BTC → MSTR → $STRATEGY // STRATEGY₿ INC. HOLDS {num(f?.btcHeld)} BTC // {num(t.circ)} MSTR TOKENS ON-CHAIN // {OH?.all?.d30?.closedPct != null ? Math.round(OH.all.d30.closedPct) : '—'}% OF MSTR VOLUME TRADED WHILE NASDAQ IS CLOSED // HOLD. HOLD. AMPLIFY. // </span>)}</div></div>
