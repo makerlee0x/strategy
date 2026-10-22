@@ -50,7 +50,7 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 .mbody{padding:16px}.mrow{display:flex;justify-content:space-between;border-bottom:1px solid var(--rule);padding:8px 0}
 .mopt{display:flex;gap:14px;align-items:center;width:100%;text-align:left;border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:12px 14px;margin:8px 0;text-decoration:none;cursor:pointer;font-family:inherit}.mopt:hover{border-color:var(--red-t)}
 .mbtns{display:flex;gap:8px;flex-wrap:wrap}.swaphost{border:1px dashed var(--rule);min-height:120px;margin:12px 0;padding:10px}
-.logo img{width:28px;height:28px;border-radius:5px}
+.logo img{display:block;width:auto;height:44px}
 .sw{display:flex;flex-direction:column;gap:10px}.sw-top,.sw-tool,.sw-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .seg{display:flex;border:1px solid var(--ink)}.seg button{background:transparent;color:var(--ink);border:0;padding:8px 18px;text-transform:uppercase;letter-spacing:.1em;font:inherit;font-size:11px;cursor:pointer}.seg button.on{background:var(--ink);color:var(--bg)}
 .sw-wallet{border:1px solid var(--ink);background:transparent;color:var(--ink);padding:8px 12px;font:inherit;font-size:11px;text-transform:uppercase;letter-spacing:.08em;cursor:pointer}.sw-wallet:hover{background:var(--red);color:var(--on-red);border-color:var(--red)}
