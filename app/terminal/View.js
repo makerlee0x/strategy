@@ -1,6 +1,6 @@
 'use client';
 // An old-school terminal with fixed commands filled from live data. No AI: every answer is written here.
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { fmt, num } from '../data'; import { useLive } from '../../lib/useLive'; import { TERMINAL } from '../feeds'; import { summarize } from '../../lib/metrics.mjs'; import Actions, { ADDR, copyText } from '../strategy/Modals';
 const P = 'C:\\$STRATEGY>';
 const n2 = v => v == null || !Number.isFinite(v) ? '—' : v.toFixed(2);
@@ -11,7 +11,9 @@ export default function View({ init }) {
   const [SM, PB, H, F8, T, OH] = useLive(TERMINAL, undefined, init);
   const [log, setLog] = useState([]), [cmd, setCmd] = useState(''), [hist, setHist] = useState({ list: [], i: -1 });
   const [bright, setBright] = useState(1), [on, setOn] = useState(true), [laser, setLaser] = useState(false), [copied, setCopied] = useState(false);
-  const inp = useRef(), scr = useRef();
+  const inp = useRef(), scr = useRef(), room = useRef();
+  // Fit the terminal to one screen: measure where it starts (the menu wraps differently by width).
+  useLayoutEffect(() => { const fit = () => { const el = room.current; if (el) el.style.setProperty('--term-top', Math.round(el.getBoundingClientRect().top + scrollY) + 'px'); }; fit(); addEventListener('resize', fit); return () => removeEventListener('resize', fit); }, []);
   const M = SM?.display || {}, s = PB?.strategy && !PB.strategy.error ? PB.strategy : null, S = H?.days?.length ? summarize(H.days) : null;
   const chg = M.change24h ? (M.change24hPositive ? '+' : '−') + M.change24h.replace('-', '') + ' 24H' : '';
   const pool = s?.stockInPool, fee = s ? Math.max(0, s.stockInPool - s.curveStock) : null, f = F8?.latest, t = T?.totals || {};
@@ -53,13 +55,14 @@ export default function View({ init }) {
     if (e.key === 'ArrowDown' && hist.i >= 0) { e.preventDefault(); const i = hist.i + 1; if (i >= hist.list.length) { setHist({ ...hist, i: -1 }); setCmd(''); } else { setHist({ ...hist, i }); setCmd(hist.list[i]); } }
   };
   const line = (x, i) => typeof x === 'string' ? <div key={i}>{x}</div> : x.href ? <div key={i}><a href={x.href} target="_blank" rel="noopener">{x.t}</a></div> : <div key={i}><span className="dim">{x[0]}</span><span className="hi">{x[1]}</span></div>;
-  return (<div className="term-room">
+  return (<div className="term-room" ref={room}>
     <div className="term-case">
       <div className="term-top"><div><div className="term-badge">$STRATEGY</div><div className="term-model">STRATEGY COIN / MODEL 4926</div></div>
         <div className="term-leds" aria-hidden="true"><span><i className={'led' + (SM ? ' on' : '')} />RPC</span><span><i className="led" />WALLET</span><span><i className={'led' + (s ? ' on' : '')} />LP</span><span><i className={'led' + (SM && SM.ok !== false ? ' on' : '')} />LIVE</span></div>
         <div className="term-grille" aria-hidden="true" /></div>
       <div className="term-body">
         <div className="term-bezel"><div className={'term-crt' + (laser ? ' laser' : '') + (on ? '' : ' off')} style={{ filter: `brightness(${[0.7, 1, 1.25][bright]})` }} onClick={() => inp.current?.focus({ preventScroll: true })}>
+          {on && <svg className="term-mark" viewBox="0 0 550 381" aria-hidden="true"><path fillRule="evenodd" d="M66 342L66 304L33 303L-0 303L0 272L0 242L33 241L66 241L66 229L66 216L33 216L-0 216L0 185L0 154L33 154L66 154L66 142C66 115 75 84 88 64C103 42 124 26 147 20C159 17 175 15 187 17C218 20 243 37 262 67C267 75 268 76 268 74C272 65 279 52 284 45C291 35 303 23 311 17C330 5 357 -2 381 1C409 4 432 14 451 34C476 59 489 95 489 139L489 151L520 151L550 151L550 182L550 213L520 213L489 213L489 227L489 241L519 241L550 242L550 272L550 303L520 303L490 304L489 342L489 381L277 381L66 381L66 342ZM214 206L214 166L211 163C204 153 188 155 183 166C182 168 182 177 182 207L182 246L198 246L214 246L214 206ZM373 204C373 163 372 162 370 158C366 148 359 144 349 144C339 144 331 149 327 159C325 164 325 167 325 205L325 246L349 246L373 246L373 204Z" /></svg>}
           {on ? <>
             <div className="dim">$STRATEGY BIOS v4.926 · ROBINHOOD CHAIN · LINK {SM ? 'OK' : '...'}</div>
             <div className="dim" style={{ marginBottom: 12 }}>TYPE <span className="hi">HELP</span> FOR COMMANDS.</div>
