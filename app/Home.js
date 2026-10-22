@@ -51,8 +51,8 @@ export default function Home({ init }) {
         <ShareX ready={per1M != null} text={post} style={{ display: 'block', textAlign: 'center', background: 'var(--bg)', color: 'var(--ink)', boxShadow: 'none', marginTop: 0 }} />
       </div></div></section>
 
-    <section><h2 className="sec-h">Got MSTR? Put it to work.</h2><p className="sub" style={{ margin: '0 0 28px' }}>The one-stop shop for stock token holders. Every MSTR token, every chain, every way to earn.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 18 }}>{tile('/earn/#fees', 'Earn fees', 'LP pools')}{tile('/earn/#lend', 'Lend', 'Kamino · Morpho')}{tile('/earn/#borrow', 'Borrow', 'Teller · Morpho')}{tile('/earn/#hedge', 'Trade 24/7', 'perps · nights + weekends', 1)}</div></section>
+    <section><h2 className="sec-h">Got MSTR? Put it to work.</h2><p className="sub" style={{ margin: '0 0 28px' }}>The one-stop shop for stock token holders. Every MSTR token, every chain, and what you can do with it.</p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 18 }}>{tile('/mstr/#work', 'Earn fees', 'Robinhood Chain pools')}{tile('/mstr/#work', 'Borrow', 'Teller · Morpho')}{tile('/mstr/#work', 'Trade 24/7', 'Hyperliquid perps')}{tile('/mstr/#overview', 'Track it', 'every MSTR token, every chain', 1)}</div></section>
 
     <section style={{ background: 'var(--red)', color: 'var(--on-red)', padding: 36, display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center', margin: '72px 0 0' }}>
       <div style={{ flex: '999 1 420px' }}><div className="d" style={{ fontSize: 34, lineHeight: 1.05 }}>{T?.totals?.circ ? num(T.totals.circ) : '—'} MSTR tokens on-chain.</div><div style={{ fontSize: 13, marginTop: 8 }}>{fmt(T?.totals?.mcap)} of MSTR, tokenized and trading 24/7. Every token, every chain.</div></div>

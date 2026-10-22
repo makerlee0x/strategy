@@ -112,3 +112,22 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 /* Phones: a Buy bar pinned to the bottom of every page. */
 .buybar{display:none}
 @media(max-width:760px){.buybar{display:block;position:fixed;left:12px;right:12px;bottom:12px;z-index:60;background:var(--red);color:var(--on-red);text-align:center;text-decoration:none;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;padding:15px;box-shadow:4px 4px 0 var(--ink)}body{padding-bottom:76px}}
+/* Bento: ivory tiles on oxblood (the $STRATEGY and MSTR On-Chain pages). Red only as an accent. */
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}.r2{grid-row:span 2}
+.tile{background:var(--ink);color:var(--bg);padding:22px}.tile a{color:#b51d27}
+.tile-red{background:var(--red);color:var(--on-red);padding:22px;box-shadow:6px 6px 0 var(--ink)}
+.tile-line{border:2px solid var(--ink);padding:22px}.tile-dash{border:2px dashed var(--red-t);padding:22px}
+.stack{display:flex;flex-direction:column;justify-content:space-between;gap:14px}.sq{aspect-ratio:1}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.num{font-family:'Bungee',sans-serif;font-weight:400;line-height:1}.ox{color:#b51d27}.soft{color:#5e4a44}
+.pagehead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:18px;padding:12px 0 28px}
+.pagehead h1{font-family:'Bungee',sans-serif;font-weight:400;font-size:64px;margin:10px 0 12px;text-shadow:none}
+.sec2{font-family:'Bungee',sans-serif;font-weight:400;font-size:36px;line-height:1.05;margin:64px 0 6px;scroll-margin-top:16px;border:0;padding:0;display:block;letter-spacing:0;text-transform:uppercase}
+.seg2{display:flex;border:2px solid var(--bg)}.seg2 button{background:transparent;color:var(--bg);border:0;font:inherit;font-size:12px;font-weight:700;letter-spacing:.06em;padding:8px 14px;min-height:36px;cursor:pointer}.seg2 button.on{background:var(--bg);color:var(--ink)}
+.orow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #1c080922;font-size:13px}.orow:last-of-type{border-bottom:0}
+.tile .risk{color:#3a2a26}.tabs2{display:flex;flex-wrap:wrap;border:2px solid var(--ink);width:max-content;max-width:100%;margin-bottom:8px}.tabs2 a{padding:11px 16px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.06em}.tabs2 a.on{background:var(--ink);color:var(--bg)}
+.addrchip.light{background:var(--ink);color:var(--bg)}.addrchip.light .lbl2,.addrchip.light .lbl{color:#b51d27}.addrchip.light .cp{border-color:var(--bg)}
+.calc summary{cursor:pointer;font-size:12px;font-weight:700}.calc dl{margin:10px 0 0;font-size:12px;line-height:1.55}.calc dt{font-weight:700;margin-top:8px}.calc dd{margin:0}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:16px}
+@media(max-width:860px){.bento,.steps3{grid-template-columns:1fr}.s3,.s4,.s5,.s6,.s7,.s8,.s12{grid-column:auto}.r2{grid-row:auto}.sq{aspect-ratio:auto}.pagehead h1{font-size:44px}}

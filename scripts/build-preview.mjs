@@ -17,7 +17,7 @@ for (const f of ['app', 'lib', 'data', 'public', 'package.json', 'next.config.js
 symlinkSync(join(ROOT, 'node_modules'), join(W, 'node_modules'));
 rmSync(join(W, 'app/api'), { recursive: true });
 
-// API routes → snapshot files: /api/charts?resolution=60&rangeDays=7 → snapshot/charts_resolution_60_rangeDays_7.json
+// API routes → snapshot files: /api/chains → snapshot/chains.json
 edit(join(W, 'lib/useLive.js'), s => s.replace("fetch(u,", `fetch('${BASE}/snapshot/' + u.replace(/^\\/api\\//, '').replace(/[?&=]/g, '_') + '.json',`));
 // Internal links and images → githack paths
 for (const f of walk(join(W, 'app')).filter(f => f.endsWith('.js'))) edit(f, s => s
@@ -31,7 +31,7 @@ writeFileSync(join(W, 'lib/ssr.js'), `import { readFileSync } from 'node:fs';
 export async function initial(urls) { const o = {}; for (const u of urls) { try { o[u] = JSON.parse(readFileSync(${JSON.stringify(snapDir)} + '/' + u.replace(/^\\/api\\//, '').replace(/[?&=]/g, '_') + '.json', 'utf8')); } catch (_) {} } return o; }
 `);
 for (const f of walk(join(W, 'app')).filter(f => f.endsWith('page.js'))) edit(f, s => s.replace(/^export const revalidate = \d+;\n/m, ''));
-edit(join(W, 'next.config.js'), s => s.replace('module.exports = {', `module.exports = {\n  output: 'export', trailingSlash: true, assetPrefix: '${CDN}',`).replace(/async headers\(\) \{[\s\S]*?\n  \}\n/, ''));
+edit(join(W, 'next.config.js'), s => s.replace('module.exports = {', `module.exports = {\n  output: 'export', trailingSlash: true, assetPrefix: '${CDN}',`).replace(/  async (headers|redirects)\(\) \{[\s\S]*?\n  \},?\n/g, ''));
 
 execSync('npx next build', { cwd: W, stdio: 'inherit' });
 const prevSnap = existsSync(join(OUT, 'snapshot')) ? mkdtempSync(join(tmpdir(), 'snap-')) : null;
