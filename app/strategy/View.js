@@ -42,5 +42,6 @@ export default function View({ init }) {
         <CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · Robinhood" addr={ADDR.MSTR} />
         <span style={{ fontSize: 13 }}>{L.map(([t, u], i) => <span key={t}>{i ? ' · ' : ''}<a href={u} target="_blank" rel="noopener" style={{ color: 'var(--on-red)' }}>{t} ↗</a></span>)}</span></div>
     </div>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 28 }}><a className="egg" href="/terminal/" title="terminal" aria-label="Open the Strategy Coin terminal">C:\&gt;<span className="cur" aria-hidden="true" /></a></div>
     <Actions bare asOf={PO?.fetchedAt?.slice(0, 10) || ''} pools={pools} /></>);
 }

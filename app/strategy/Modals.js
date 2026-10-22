@@ -4,7 +4,7 @@ const CA='0x168661c52e5922288dfb2b3f323b6cf90eb21e18',MSTR='0xec262a75e413fafd0d
 const FOMO='https://fomo.family/coin?address=0x168661c52e5922288dfb2b3f323b6cf90eb21e18&chainId=4663&r=0xmakerlee&source=share_link';
 const LONG='https://app.long.xyz/tokens/'+CA;
 const UNI=`https://app.uniswap.org/swap?chain=robinhood&inputCurrency=${MSTR}&outputCurrency=${CA}`;
-async function copyText(v){try{await navigator.clipboard.writeText(v)}catch(e){const t=document.createElement('textarea');t.value=v;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}}
+export async function copyText(v){try{await navigator.clipboard.writeText(v)}catch(e){const t=document.createElement('textarea');t.value=v;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}}
 /** Labelled, shortened address chip with a copy button (hero). */
 export function CopyAddr({label,addr,light}){const [c,setC]=useState(false);return <button type="button" className={'addrchip'+(light?' light':'')} onClick={async()=>{await copyText(addr);setC(true);setTimeout(()=>setC(false),1600)}} aria-label={'Copy '+label+' contract address'} title={addr}><span className="lbl">{label}</span><span>{addr.slice(0,6)+'…'+addr.slice(-4)}</span><span className="cp">{c?'COPIED ✓':'COPY'}</span></button>}
 export const ADDR={STRATEGY:CA,MSTR};
