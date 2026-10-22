@@ -24,7 +24,7 @@ export default function PoolChart({ days, sample }) {
   const step = Math.max(100, Math.round(max / 3 / 100) * 100), last = pts[pts.length - 1];
   return <>
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-      <div><div className="lbl">MSTR in the pool</div><div className="soft" style={{ fontSize: 12, marginTop: 4 }}>STRATEGY/MSTR · Uniswap v4 · Robinhood Chain {sample && <span className="tag sample" style={{ color: '#5e4a44' }}>SAMPLE</span>}</div></div>
+      <div><div className="lbl">MSTR in the pool</div><div className="soft" style={{ fontSize: 12, marginTop: 4 }}>$STRATEGY/MSTR · Uniswap v4 · Robinhood Chain {sample && <span className="tag sample" style={{ color: '#5e4a44' }}>SAMPLE</span>}</div></div>
       <div className="seg2" role="group" aria-label="Chart range">{[['D', 'DAYS'], ['W', 'WEEKS'], ['A', 'ALL']].map(([k, l]) => <button key={k} type="button" className={k === range ? 'on' : ''} aria-pressed={k === range} onClick={() => setRange(k)}>{l}</button>)}</div></div>
     <svg viewBox="0 0 760 330" style={{ width: '100%', height: 'auto', display: 'block', marginTop: 16 }} role="img" aria-label={`MSTR in the pool, ${dt(pts[0].d)} to ${dt(last.d)}: ${Math.round(last.poolMstr)} MSTR now, ${Math.round(last.feeMstr)} of it compounded from fees.`}>
       {[step, step * 2].map(v => <g key={v}><line x1={X0} x2={X1} y1={y(v)} y2={y(v)} stroke="#1c080922" /><text x="0" y={y(v) + 4} fontSize="11" fill="#5e4a44" fontFamily="Space Mono, monospace">{v}</text></g>)}

@@ -16,7 +16,7 @@ export default function View({ init }) {
   const hl = (PP?.markets || []).find(m => m.venue === 'Hyperliquid');
   return (<>
     <div className="pagehead"><div><div className="lbl" style={{ color: 'var(--red-t)' }}>For MSTR token holders · <St d={T} /></div><h1>MSTR, ON-CHAIN.</h1>
-      <p className="sub" style={{ fontSize: 15, maxWidth: 620, margin: 0 }}>Strategy stock now trades as a token, 24/7. How much exists, where it trades, how to put it to work, and how it works.</p></div>
+      <p className="sub" style={{ fontSize: 15, maxWidth: 620, margin: 0 }}>Strategy₿ Inc. stock (MSTR) now trades as a token, 24/7. How much exists, where it trades, how to put it to work, and how it works.</p></div>
       <CopyAddr light label="MSTR · Robinhood stock token" addr={ADDR.MSTR} /></div>
     <div className="tabs2" role="navigation" aria-label="On this page">{TABS.map(([k, l]) => <a key={k} href={'#' + k} className={tab === k ? 'on' : ''} aria-current={tab === k ? 'true' : undefined} onClick={() => setTab(k)}>{l.toUpperCase()}</a>)}</div>
 
@@ -29,7 +29,7 @@ export default function View({ init }) {
         <div style={{ marginTop: 14 }}>{venues.map(c => <div key={c.key} style={{ display: 'grid', gridTemplateColumns: '130px 1fr 64px', gap: 12, alignItems: 'center', padding: '6px 0', fontSize: 13 }}>
           <span style={{ fontWeight: c.key === 'robinhood' ? 700 : 400 }}>{c.chain}</span><span style={{ background: '#1c080914', height: 14 }}><span style={{ display: 'block', height: 14, width: Math.max(1, c.vol24Usd / vmax * 100) + '%', background: c.key === 'robinhood' ? 'var(--red)' : '#1c080966' }} /></span><span style={{ textAlign: 'right' }}>{fmt(c.vol24Usd)}</span></div>)}</div>
         <div className="soft" style={{ fontSize: 12, marginTop: 10 }}>{fmt(CH?.totalDexVol24Usd)} traded on DEXes, all chains</div></div>
-      <div className="tile-line s5 stack"><div className="lbl">Strategy’s bitcoin · latest 8-K</div><div className="num" style={{ fontSize: 52 }}>{num(f?.btcHeld)}</div>
+      <div className="tile-line s5 stack"><div className="lbl">Strategy₿ Inc.’s bitcoin · latest 8-K</div><div className="num" style={{ fontSize: 52 }}>{num(f?.btcHeld)}</div>
         <div style={{ fontSize: 13 }}>{chg != null && <b style={{ color: 'var(--red-t)' }}>{(chg >= 0 ? '+' : '') + num(chg)} BTC</b>}{F8?.previous?.asOf ? ' since ' + F8.previous.asOf.replace(/, \d{4}$/, '').replace(/^(\w{3})\w*/, '$1') : ''}{f?.doc && <> · <a href={f.doc} target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}>8-K filed {dt(f.filingDate)} ↗</a></>}</div></div>
     </div>
 

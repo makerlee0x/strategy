@@ -9,7 +9,7 @@ export default function Home({ init }) {
   const per1M = S ? S.stockInPool / 1e3 : null, p1 = per1M != null ? per1M.toFixed(2) : '—';
   const k8 = eightK(F8, per1M), show8k = k8 && (force8k || isFresh(k8));
   const Y = H?.days?.length ? summarize(H.days) : null, sample = H?.sample, y30 = Y ? pc(Y.yield30d) : '—';
-  const tick = [`$STRATEGY ${M.priceUsd || '—'}`, `1M STRATEGY = ${p1} MSTR`, `MSTR YIELD 30D ${y30}${sample ? ' (SAMPLE)' : ''}`, `${M.holders || '—'} HOLDERS`, `POOL HOLDS ${S ? num(S.stockInPool) : '—'} MSTR`].join(' ✦ ') + ' ✦';
+  const tick = [`$STRATEGY ${M.priceUsd || '—'}`, `1M $STRATEGY = ${p1} MSTR`, `MSTR YIELD 30D ${y30}${sample ? ' (SAMPLE)' : ''}`, `${M.holders || '—'} HOLDERS`, `POOL HOLDS ${S ? num(S.stockInPool) : '—'} MSTR`].join(' ✦ ') + ' ✦';
   const post = `Every 1M $STRATEGY sits on ${p1} MSTR in the pool. Amplified MSTR. strategycoin.io`;
   const tile = (h, t, s, hot) => <a href={h} style={{ textDecoration: 'none', padding: 22, background: hot ? 'var(--red)' : 'var(--panel)', color: hot ? 'var(--on-red)' : 'var(--ink)', boxShadow: hot ? '5px 5px 0 var(--ink)' : '5px 5px 0 var(--red)' }}><div className="d" style={{ fontSize: 22 }}>{t}</div><div style={{ fontSize: 12, marginTop: 6 }}>{s}</div></a>;
   return (<>
@@ -20,15 +20,15 @@ export default function Home({ init }) {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}><a className="pillbtn" href="#buy" style={{ background: '#ffffff', color: '#b51d27' }}>BUY $STRATEGY</a><span className="pillbtn" style={{ background: 'var(--bg)', color: '#ffffff', cursor: 'default' }}>STAKE · SOON</span></div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 26 }}><CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · ROBINHOOD" addr={ADDR.MSTR} /></div>
       <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, margin: '10px 0 0', color: '#ffe3e5' }}>Both live on Robinhood Chain. Add them to your wallet so you can see the pair.</p>
-      {per1M != null && <div className="sticker" aria-label="MSTR per 1M STRATEGY"><b>{p1}</b><span>MSTR PER 1M COINS</span></div>}
+      {per1M != null && <div className="sticker" aria-label="MSTR per 1M $STRATEGY"><b>{p1}</b><span>MSTR PER 1M COINS</span></div>}
     </div></section>
-    <div className="ticker" aria-label="STRATEGY at a glance"><div><span>{tick}</span><span aria-hidden="true">{tick}</span></div></div>
+    <div className="ticker" aria-label="$STRATEGY at a glance"><div><span>{tick}</span><span aria-hidden="true">{tick}</span></div></div>
     <Actions bare pools={(PO?.pools || []).slice(0, 10).map(p => ({ id: p.id, name: p.pair, dex: p.dex, liq: fmt(p.liquidityUsd), vol: fmt(p.volume24hUsd) }))} asOf={PO?.fetchedAt?.slice(0, 10) || ''} />
     {show8k && <EightKBanner k={k8} />}
 
-    <section id="stack"><h2 className="sec-h">The stack</h2><p className="sub" style={{ margin: '0 0 28px' }}>If MSTR is amplified BTC, STRATEGY is amplified MSTR. Three layers, one trade.</p>
+    <section id="stack"><h2 className="sec-h">The stack</h2><p className="sub" style={{ margin: '0 0 28px' }}>If MSTR is amplified BTC, $STRATEGY is amplified MSTR. Three layers, one trade.</p>
       <div className="g3">
-        <div className="layer" style={{ background: 'var(--panel)' }}><div className="k">Layer 01</div><div className="d">$BTC</div><div className="say" style={{ fontSize: 13 }}>Strategy holds {F8?.latest ? num(F8.latest.btcHeld) : '—'} BTC. Hardest money on earth.</div></div>
+        <div className="layer" style={{ background: 'var(--panel)' }}><div className="k">Layer 01</div><div className="d">$BTC</div><div className="say" style={{ fontSize: 13 }}>Strategy₿ Inc. holds {F8?.latest ? num(F8.latest.btcHeld) : '—'} BTC. Hardest money on earth.</div></div>
         <div className="layer" style={{ background: 'var(--ink)', color: 'var(--bg)' }}><div className="k" style={{ color: 'var(--bg)' }}>Layer 02</div><div className="d">$MSTR</div><div className="say" style={{ fontSize: 13 }}>Amplified bitcoin, now a token, trading 24/7 on Robinhood Chain.</div></div>
         <div className="layer" style={{ background: 'var(--red)', color: 'var(--on-red)', boxShadow: '6px 6px 0 var(--ink)' }}><div className="k" style={{ color: 'var(--on-red)' }}>Layer 03</div><div className="d">$STRATEGY</div><div className="say" style={{ fontSize: 13 }}>Every 1M coins = {p1} MSTR in the pool. Amplified MSTR. You are here.</div></div>
       </div></section>
@@ -42,11 +42,11 @@ export default function Home({ init }) {
           <div className="stat"><div className="k">MSTR per 1M</div><b style={{ color: 'var(--red-t)' }}>{p1}</b></div>
           <div className="stat"><div className="k">Holders</div><b>{M.holders || '—'}</b></div>
         </div>
-        <a href="/strategy/" style={{ display: 'inline-block', marginTop: 20, color: 'var(--red-t)' }}>All STRATEGY stats →</a></div>
+        <a href="/strategy/" style={{ display: 'inline-block', marginTop: 20, color: 'var(--red-t)' }}>All $STRATEGY stats →</a></div>
       <div style={{ flex: '1 1 320px', minWidth: 0, display: 'flex', justifyContent: 'center', paddingTop: 40 }}><div className="tilt">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, fontWeight: 700 }}><span className="d" style={{ fontSize: 18, color: 'var(--red)' }}>$S</span><span>SHARE CARD</span></div>
         <div className="d" style={{ fontSize: 36, margin: '18px 0 6px' }}>1M = {p1} MSTR</div>
-        <div style={{ fontSize: 13, lineHeight: 1.55 }}>every 1M STRATEGY sits on {p1} MSTR in the pool. Amplified MSTR.</div>
+        <div style={{ fontSize: 13, lineHeight: 1.55 }}>every 1M $STRATEGY sits on {p1} MSTR in the pool. Amplified MSTR.</div>
         <div className="chips2"><span style={{ background: 'var(--bg)', color: 'var(--ink)' }}>{y30} MSTR 30D{sample ? ' · SAMPLE' : ''}</span><span style={{ background: 'var(--red)', color: 'var(--on-red)' }}>{M.holders || '—'} HOLDERS</span></div>
         <ShareX ready={per1M != null} text={post} style={{ display: 'block', textAlign: 'center', background: 'var(--bg)', color: 'var(--ink)', boxShadow: 'none', marginTop: 0 }} />
       </div></div></section>

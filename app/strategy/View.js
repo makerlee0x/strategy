@@ -6,9 +6,9 @@ const L = [['Uniswap pool', POOL], ['Dexscreener', 'https://dexscreener.com/robi
 const n0 = v => v == null || !Number.isFinite(v) ? '—' : Math.round(v).toLocaleString('en-US');
 const pc = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 const CALC = [
-  ['MSTR in the pool', 'Tokenized MSTR held by the STRATEGY/MSTR pool on Robinhood Chain. It is the pool’s inventory, not a redemption right.'],
-  ['Compounded by fees', 'MSTR in the pool above what the launch liquidity alone would hold at today’s price. The pool launched with only STRATEGY, so MSTR on the launch curve came from buyers and MSTR above it came from fees.'],
-  ['MSTR per 1M $STRATEGY', 'MSTR in the pool ÷ 1B coins × 1M. The coin’s version of Strategy’s bitcoin per share.'],
+  ['MSTR in the pool', 'Tokenized MSTR held by the $STRATEGY/MSTR pool on Robinhood Chain. It is the pool’s inventory, not a redemption right.'],
+  ['Compounded by fees', 'MSTR in the pool above what the launch liquidity alone would hold at today’s price. The pool launched with only $STRATEGY, so MSTR on the launch curve came from buyers and MSTR above it came from fees.'],
+  ['MSTR per 1M $STRATEGY', 'MSTR in the pool ÷ 1B coins × 1M. The coin’s version of Strategy₿ Inc.’s bitcoin per share.'],
   ['MSTR Yield', 'MSTR compounded by fees over 30 days ÷ MSTR in the pool 30 days ago. MSTR that came in because the price went up is not counted.'],
   ['History', 'One snapshot per day. Until enough days are stored, the chart and yield use placeholder data marked SAMPLE.']];
 export default function View({ init }) {
@@ -36,12 +36,12 @@ export default function View({ init }) {
           <div key={i}><div className="num ox" style={{ fontSize: 28 }}>0{i + 1}</div><p style={{ fontSize: 14, lineHeight: 1.5, margin: '8px 0 0' }}>{t}</p></div>)}</div>
         <p className="soft" style={{ fontSize: 12, margin: '18px 0 0' }}>The launch liquidity is locked and can’t be withdrawn. Pool MSTR is the pool’s inventory, not a redemption right.</p>
         <details className="calc" style={{ marginTop: 12 }}><summary>How we calculate each number</summary><dl>{CALC.map(([a, b]) => <div key={a}><dt>{a}</dt><dd>{b}</dd></div>)}</dl></details></div>
-      <div className="tile-dash s4 stack"><div className="lbl" style={{ color: 'var(--red-t)' }}>Strategy Coin Reserve</div><div className="num" style={{ fontSize: 30 }}>Coming soon</div><div style={{ fontSize: 13, opacity: .8 }}>A public wallet that stacks MSTR for Strategy Coin.</div></div>
+      <div className="tile-dash s4 stack"><div className="lbl" style={{ color: 'var(--red-t)' }}>STRATEGY COIN Reserve</div><div className="num" style={{ fontSize: 30 }}>Coming soon</div><div style={{ fontSize: 13, opacity: .8 }}>A public wallet that stacks MSTR for STRATEGY COIN.</div></div>
       <div className="tile-red s12" id="buy-band" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18 }}>
         <a className="pillbtn" href="#buy" style={{ background: 'var(--bg)', color: 'var(--on-red)' }}>buy $strategy</a>
         <CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · Robinhood" addr={ADDR.MSTR} />
         <span style={{ fontSize: 13 }}>{L.map(([t, u], i) => <span key={t}>{i ? ' · ' : ''}<a href={u} target="_blank" rel="noopener" style={{ color: 'var(--on-red)' }}>{t} ↗</a></span>)}</span></div>
     </div>
-    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 28 }}><a className="egg" href="/terminal/" title="terminal" aria-label="Open the Strategy Coin terminal">C:\&gt;<span className="cur" aria-hidden="true" /></a></div>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 28 }}><a className="egg" href="/terminal/" title="terminal" aria-label="Open the STRATEGY COIN terminal">C:\&gt;<span className="cur" aria-hidden="true" /></a></div>
     <Actions bare asOf={PO?.fetchedAt?.slice(0, 10) || ''} pools={pools} /></>);
 }

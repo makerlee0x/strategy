@@ -25,7 +25,7 @@ for (const f of walk(join(W, 'app')).filter(f => f.endsWith('.js'))) edit(f, s =
 // Footer stamp so the preview never passes for live data
 const snapDir = SNAP || join(OUT, 'snapshot'), at = JSON.parse(readFileSync(join(snapDir, 'strategy-metrics.json'), 'utf8')).fetchedAt;
 const stamp = at ? new Date(at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }) + ' CT' : 'date unknown';
-edit(join(W, 'app/layout.js'), s => s.replace('<span>Strategy Coin · @strategystock</span>', `<span>Preview · data snapshot ${stamp}</span>`));
+edit(join(W, 'app/layout.js'), s => s.replace('<span>STRATEGY COIN · @strategystock</span>', `<span>Preview · data snapshot ${stamp}</span>`));
 // No server in the preview: first renders read the snapshot files instead of calling the API handlers
 writeFileSync(join(W, 'lib/ssr.js'), `import { readFileSync } from 'node:fs';
 export async function initial(urls) { const o = {}; for (const u of urls) { try { o[u] = JSON.parse(readFileSync(${JSON.stringify(snapDir)} + '/' + u.replace(/^\\/api\\//, '').replace(/[?&=]/g, '_') + '.json', 'utf8')); } catch (_) {} } return o; }

@@ -46,16 +46,16 @@ export async function GET(req) {
     <div style={{ width: 1200, height: 675, display: 'flex', flexDirection: 'column', position: 'relative', padding: '44px 52px', background: C.bg, color: C.ink, ...M }}>
       <div style={{ position: 'absolute', right: -90, top: -90, width: 240, height: 240, borderRadius: 120, background: C.red, display: 'flex' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {L ? <img src={L} height={40} width={287} /> : <div style={{ ...D, fontSize: 30 }}>Strategy coin</div>}
+        {L ? <img src={L} height={40} width={287} /> : <div style={{ ...D, fontSize: 30 }}>STRATEGY COIN</div>}
         <div style={{ fontSize: 15, letterSpacing: 2, marginRight: 110 }}>{`8-K DAY · ${day(k.filingDate)}${demo ? ' · SAMPLE' : ''}`}</div></div>
       <div style={{ display: 'flex', flexGrow: 1, alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', width: 520 }}>
-          <div style={{ fontSize: 18, letterSpacing: 2, color: C.redT }}>{k.change > 0 ? 'SAYLOR BOUGHT' : k.change < 0 ? 'STRATEGY SOLD' : 'NO NEW BTC'}</div>
+          <div style={{ fontSize: 18, letterSpacing: 2, color: C.redT }}>{k.change > 0 ? 'SAYLOR BOUGHT' : k.change < 0 ? 'STRATEGY₿ INC. SOLD' : 'NO NEW BTC'}</div>
           <div style={{ ...D, fontSize: 150, lineHeight: 1, marginTop: 8, textShadow: `6px 6px 0 ${C.red}` }}>{signed(k.change)}</div>
           <div style={{ ...D, fontSize: 56, lineHeight: 1 }}>BTC</div></div>
         <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, marginLeft: 48 }}>
-          {box('STRATEGY HOLDS', num(k.btcHeld) + ' BTC')}{down}{box('MSTR', 'AMPLIFIED BTC')}{down}{box('EVERY 1M $STRATEGY HOLDS', (k.per1M != null ? k.per1M.toFixed(2) : '—') + ' MSTR', null, 1)}</div></div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: C.mu }}><span style={{ color: C.ink }}>strategycoin.io</span><span>Source: SEC EDGAR 8-K · Not affiliated with Strategy Inc.</span></div>
+          {box('STRATEGY₿ INC. HOLDS', num(k.btcHeld) + ' BTC')}{down}{box('MSTR', 'AMPLIFIED BTC')}{down}{box('EVERY 1M $STRATEGY HOLDS', (k.per1M != null ? k.per1M.toFixed(2) : '—') + ' MSTR', null, 1)}</div></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: C.mu }}><span style={{ color: C.ink }}>strategycoin.io</span><span>Source: SEC EDGAR 8-K · Not affiliated with Strategy₿ Inc.</span></div>
     </div>,
     { width: 1200, height: 675, fonts: F.length ? F : undefined, headers: { 'Cache-Control': demo ? 'no-store' : 'public, max-age=0, s-maxage=1800, stale-while-revalidate=3600' } });
 }

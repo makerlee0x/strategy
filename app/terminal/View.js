@@ -2,7 +2,7 @@
 // An old-school terminal with fixed commands filled from live data. No AI: every answer is written here.
 import { useEffect, useRef, useState } from 'react';
 import { fmt, num } from '../data'; import { useLive } from '../../lib/useLive'; import { TERMINAL } from '../feeds'; import { summarize } from '../../lib/metrics.mjs'; import Actions, { ADDR, copyText } from '../strategy/Modals';
-const P = 'C:\\STRATEGY>';
+const P = 'C:\\$STRATEGY>';
 const n2 = v => v == null || !Number.isFinite(v) ? '—' : v.toFixed(2);
 const pc = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 const dt = d => d ? new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase() : '—';
@@ -20,11 +20,11 @@ export default function View({ init }) {
     switch (c) {
       case '': out = []; break;
       case 'help': case '?': out = HELP; break;
-      case 'stack': out = ['BTC → MSTR → $STRATEGY', ['STRATEGY HOLDS ', num(f?.btcHeld) + ' BTC'], ['THE POOL HOLDS ', num(pool) + ' MSTR'], ['EVERY 1M $STRATEGY: ', n2(pool != null ? pool / 1e3 : null) + ' MSTR']]; break;
+      case 'stack': out = ['BTC → MSTR → $STRATEGY', ['STRATEGY₿ INC. HOLDS ', num(f?.btcHeld) + ' BTC'], ['THE POOL HOLDS ', num(pool) + ' MSTR'], ['EVERY 1M $STRATEGY: ', n2(pool != null ? pool / 1e3 : null) + ' MSTR']]; break;
       case 'price': out = [['$STRATEGY ', (M.priceUsd || '—') + (chg ? '  ' + chg : '')], ['MARKET CAP ', M.marketCap || '—'], ['24H VOLUME ', M.volume24h || '—'], ['HOLDERS ', M.holders || '—']]; break;
       case 'pool': out = [['MSTR IN POOL ', num(pool)], ['· LOCKED LAUNCH LIQUIDITY ', num(s ? pool - fee : null)], ['· COMPOUNDED BY FEES ', num(fee)], ['MSTR YIELD 30D ', pc(S?.yield30d) + (H?.sample ? ' (SAMPLE)' : '')], 'PART OF EVERY FEE GOES BACK IN. THE FLOOR ONLY RISES.']; break;
       case 'mstr': out = [['MSTR TOKENS ON-CHAIN ', num(t.circ)], ['WORTH ', fmt(t.mcap)], ['TRADED WHILE NASDAQ IS CLOSED ', OH?.all?.d30?.closedPct != null ? Math.round(OH.all.d30.closedPct) + '% (30D)' : '—'], 'MORE: /MSTR']; break;
-      case '8k': out = f ? [['LATEST 8-K FILED ', dt(f.filingDate)], ['STRATEGY HOLDS ', num(f.btcHeld) + ' BTC'], ['CHANGE ', (F8.weeklyChangeBtc >= 0 ? '+' : '') + num(F8.weeklyChangeBtc) + ' BTC'], { href: f.doc, t: 'OPEN THE FILING ↗' }] : ['NO FILING LOADED. TRY AGAIN SOON.']; break;
+      case '8k': out = f ? [['LATEST 8-K FILED ', dt(f.filingDate)], ['STRATEGY₿ INC. HOLDS ', num(f.btcHeld) + ' BTC'], ['CHANGE ', (F8.weeklyChangeBtc >= 0 ? '+' : '') + num(F8.weeklyChangeBtc) + ' BTC'], { href: f.doc, t: 'OPEN THE FILING ↗' }] : ['NO FILING LOADED. TRY AGAIN SOON.']; break;
       case 'buy': out = ['OPENING BUY...']; setTimeout(() => { location.hash = 'buy'; }, 350); break;
       case 'ca': copyText(ADDR.STRATEGY); out = [['$STRATEGY ', ADDR.STRATEGY], ['MSTR (ROBINHOOD) ', ADDR.MSTR], 'COPIED $STRATEGY TO CLIPBOARD.']; break;
       case 'gm': out = ['GM. MSTR TRADES 24/7 ON-CHAIN. NASDAQ IS CLOSED.', 'HOLD. HOLD. AMPLIFY.']; break;
@@ -55,13 +55,13 @@ export default function View({ init }) {
   const line = (x, i) => typeof x === 'string' ? <div key={i}>{x}</div> : x.href ? <div key={i}><a href={x.href} target="_blank" rel="noopener">{x.t}</a></div> : <div key={i}><span className="dim">{x[0]}</span><span className="hi">{x[1]}</span></div>;
   return (<div className="term-room">
     <div className="term-case">
-      <div className="term-top"><div><div className="term-badge">STRATEGY</div><div className="term-model">STRATEGY COIN / MODEL 4926</div></div>
+      <div className="term-top"><div><div className="term-badge">$STRATEGY</div><div className="term-model">STRATEGY COIN / MODEL 4926</div></div>
         <div className="term-leds" aria-hidden="true"><span><i className={'led' + (SM ? ' on' : '')} />RPC</span><span><i className="led" />WALLET</span><span><i className={'led' + (s ? ' on' : '')} />LP</span><span><i className={'led' + (SM && SM.ok !== false ? ' on' : '')} />LIVE</span></div>
         <div className="term-grille" aria-hidden="true" /></div>
       <div className="term-body">
         <div className="term-bezel"><div className={'term-crt' + (laser ? ' laser' : '') + (on ? '' : ' off')} style={{ filter: `brightness(${[0.7, 1, 1.25][bright]})` }} onClick={() => inp.current?.focus({ preventScroll: true })}>
           {on ? <>
-            <div className="dim">STRATEGY BIOS v4.926 · ROBINHOOD CHAIN · LINK {SM ? 'OK' : '...'}</div>
+            <div className="dim">$STRATEGY BIOS v4.926 · ROBINHOOD CHAIN · LINK {SM ? 'OK' : '...'}</div>
             <div className="dim" style={{ marginBottom: 12 }}>TYPE <span className="hi">HELP</span> FOR COMMANDS.</div>
             <div className="term-split">
               <div className="term-log" ref={scr} aria-live="polite">
@@ -75,7 +75,7 @@ export default function View({ init }) {
                   {H?.sample && <div className="dim" style={{ fontSize: 16, marginTop: 6 }}>* SAMPLE HISTORY</div>}</div>
               </div>
             </div>
-            <div className="term-tick dim" aria-hidden="true"><div>{[0, 1].map(k => <span key={k}>BTC → MSTR → $STRATEGY // STRATEGY HOLDS {num(f?.btcHeld)} BTC // {num(t.circ)} MSTR TOKENS ON-CHAIN // {OH?.all?.d30?.closedPct != null ? Math.round(OH.all.d30.closedPct) : '—'}% OF MSTR VOLUME TRADED WHILE NASDAQ IS CLOSED // HOLD. HOLD. AMPLIFY. // </span>)}</div></div>
+            <div className="term-tick dim" aria-hidden="true"><div>{[0, 1].map(k => <span key={k}>BTC → MSTR → $STRATEGY // STRATEGY₿ INC. HOLDS {num(f?.btcHeld)} BTC // {num(t.circ)} MSTR TOKENS ON-CHAIN // {OH?.all?.d30?.closedPct != null ? Math.round(OH.all.d30.closedPct) : '—'}% OF MSTR VOLUME TRADED WHILE NASDAQ IS CLOSED // HOLD. HOLD. AMPLIFY. // </span>)}</div></div>
           </> : <div className="term-nosignal">NO SIGNAL</div>}
         </div></div>
         <div className="term-side">

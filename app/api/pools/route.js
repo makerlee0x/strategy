@@ -13,7 +13,7 @@ export async function GET(req) {
       const pools = (raw.data || []).slice(0, 12).map(p => { const a = p.attributes || {}; const addr = String(a.address || '').toLowerCase();
         return { id: addr, dex: titleDex(p.relationships?.dex?.data?.id), pair: String(a.name || '').slice(0, 80), primary: addr === PRIMARY, liquidityUsd: Number(a.reserve_in_usd) || 0, volume24hUsd: Number(a.volume_usd?.h24) || 0, fee: (String(a.name).match(/(\d+(?:\.\d+)?)\s*%/) || [])[1] || null, url: 'https://www.geckoterminal.com/robinhood/pools/' + addr }; }).filter(p => p.id);
       pools.sort((a, b) => (b.primary - a.primary) || (b.liquidityUsd - a.liquidityUsd));
-      return { ok: true, pairLabel: 'STRATEGY / MSTR', source: 'geckoterminal', fetchedAt: new Date().toISOString(), pools };
+      return { ok: true, pairLabel: '$STRATEGY / MSTR', source: 'geckoterminal', fetchedAt: new Date().toISOString(), pools };
     });
     return json(value, { origin, swr: 120, headers: { 'X-Cache': cache } });
   } catch (_) { return json({ ok: false, delayed: true, source: 'geckoterminal', pools: [] }, { origin, sMaxAge: 15, headers: { 'X-Cache': 'DELAYED' } }); }
