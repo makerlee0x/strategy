@@ -50,7 +50,7 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 .mbody{padding:16px}.mrow{display:flex;justify-content:space-between;border-bottom:1px solid var(--rule);padding:8px 0}
 .mopt{display:flex;gap:14px;align-items:center;width:100%;text-align:left;border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:12px 14px;margin:8px 0;text-decoration:none;cursor:pointer;font-family:inherit}.mopt:hover{border-color:var(--red-t)}
 .mbtns{display:flex;gap:8px;flex-wrap:wrap}.swaphost{border:1px dashed var(--rule);min-height:120px;margin:12px 0;padding:10px}
-.logo img{display:block;width:auto;height:44px}
+.logo img{display:block;width:auto;height:36px}
 .sw{display:flex;flex-direction:column;gap:10px}.sw-top,.sw-tool,.sw-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .seg{display:flex;border:1px solid var(--ink)}.seg button{background:transparent;color:var(--ink);border:0;padding:8px 18px;text-transform:uppercase;letter-spacing:.1em;font:inherit;font-size:11px;cursor:pointer}.seg button.on{background:var(--ink);color:var(--bg)}
 .sw-wallet{border:1px solid var(--ink);background:transparent;color:var(--ink);padding:8px 12px;font:inherit;font-size:11px;text-transform:uppercase;letter-spacing:.08em;cursor:pointer}.sw-wallet:hover{background:var(--red);color:var(--on-red);border-color:var(--red)}
@@ -73,6 +73,11 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 .risk{margin-top:8px;font-size:12px;line-height:1.5;border-left:3px solid var(--red);padding-left:10px;max-width:720px}
 .tokgrid{display:grid;grid-template-columns:220px 1fr;gap:16px}
 .g4.tight>div{padding:14px 16px}
+.cardwrap{overflow-x:auto;max-width:100%}
+.addrchip{display:inline-flex;align-items:center;gap:14px;background:var(--bg);color:#fff;border:0;padding:12px 16px;min-height:44px;font-family:'Space Mono',monospace;font-size:14px;cursor:pointer}
+.addrchip:hover,.addrchip:focus-visible{outline:2px solid #fff;outline-offset:2px}.addrchip .lbl{font-size:11px;font-weight:700;letter-spacing:.08em;color:#ff8a90}.addrchip .cp{font-size:11px;font-weight:700;letter-spacing:.08em;border:1px solid #fff;padding:2px 6px}
+.grid100{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:4px;margin:20px 0 14px}.grid100 i{aspect-ratio:1;display:block}
+.pulse{animation:pulse 1.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.25}}@media(prefers-reduced-motion:reduce){.pulse{animation:none}}
 /* Homepage hero: the red poster (B1). Rubik Mono One + Space Grotesk here only. */
 .hero-red{background-color:var(--red);background-image:radial-gradient(rgba(0,0,0,.10) 1px,transparent 1px);background-size:10px 10px;color:var(--on-red);font-family:'Space Grotesk',sans-serif;margin:-32px calc(50% - 50vw) 0;padding:48px calc(50vw - 50% + 0px) 96px;position:relative}
 .hero-red .in{max-width:1180px;margin:0 auto;position:relative}

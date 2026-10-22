@@ -1,11 +1,13 @@
 'use client';
 // Landing page: the hybrid mockup (B1 red poster hero, A3 oxblood body). Detailed coin data lives on /strategy.
-import { fmt, num } from './data'; import { useLive } from '../lib/useLive'; import { summarize } from '../lib/metrics.mjs'; import Actions, { CopyCA } from './strategy/Modals';
+import { fmt, num } from './data'; import { useLive } from '../lib/useLive'; import { summarize } from '../lib/metrics.mjs'; import Actions, { CopyAddr, ADDR } from './strategy/Modals'; import ShareOfSupply from './supply'; import { EightKBanner } from './eightk'; import { eightK, isFresh } from '../lib/eightk.mjs'; import { useEffect, useState } from 'react';
 const pc = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 export default function P() {
-  const [SM, PB, H, F8, T, PO] = useLive(['/api/strategy-metrics', '/api/pool-backing', '/api/strategy-history', '/api/strategy-filings', '/api/mstr-tokens', '/api/pools']);
+  const [SM, PB, H, F8, T, PO, RH] = useLive(['/api/strategy-metrics', '/api/pool-backing', '/api/strategy-history', '/api/strategy-filings', '/api/mstr-tokens', '/api/pools', '/api/robinhood-mstr']);
+  const [force8k, setForce8k] = useState(false); useEffect(() => setForce8k(new URLSearchParams(location.search).get('8k') === '1'), []);
   const M = SM?.display || {}, S = PB?.strategy && !PB.strategy.error ? PB.strategy : null;
   const per1M = S ? S.stockInPool / 1e3 : null, p1 = per1M != null ? per1M.toFixed(2) : '—', sats = per1M != null && F8?.satsPerShare ? per1M * F8.satsPerShare : null;
+  const k8 = eightK(F8, per1M), show8k = k8 && (force8k || isFresh(k8));
   const mnav = S ? S.mcapUsd / (S.stockInPool * S.stockUsd) : null;
   const Y = H?.days?.length ? summarize(H.days) : null, sample = H?.sample, y30 = Y ? pc(Y.yield30d) : '—';
   const tick = [`$STRATEGY ${M.priceUsd || '—'}`, `1M STRATEGY = ${p1} MSTR`, `MSTR YIELD 30D ${y30}${sample ? ' (SAMPLE)' : ''}`, `${M.holders || '—'} HOLDERS`, `POOL HOLDS ${S ? num(S.stockInPool) : '—'} MSTR`, `${sats != null ? num(sats) : '—'} SATS PER 1M`].join(' ✦ ') + ' ✦';
@@ -17,11 +19,13 @@ export default function P() {
       <h1>HOLD.<br />HOLD.<br /><span>AMPLIFY.</span></h1>
       <p className="lede">STRATEGY is a memecoin paired with real tokenized MSTR on Robinhood Chain. MSTR is amplified bitcoin. STRATEGY is amplified MSTR.</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}><a className="pillbtn" href="#buy" style={{ background: '#ffffff', color: '#b51d27' }}>BUY $STRATEGY</a><a className="pillbtn" href="#ways" style={{ background: 'var(--bg)', color: '#ffffff' }}>STAKE · SOON</a></div>
-      <div style={{ marginTop: 18 }}><CopyCA /></div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 26 }}><CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · ROBINHOOD" addr={ADDR.MSTR} /></div>
+      <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, margin: '10px 0 0', color: '#ffe3e5' }}>Both live on Robinhood Chain. Add them to your wallet so you can see the pair.</p>
       <div className="sticker" aria-label="MSTR per 1M STRATEGY"><b>{p1}</b><span>MSTR PER 1M COINS</span></div>
     </div></section>
     <div className="ticker" aria-label="STRATEGY at a glance"><div><span>{tick}</span><span aria-hidden="true">{tick}</span></div></div>
     <Actions bare pools={(PO?.pools || []).slice(0, 10).map(p => ({ id: p.id, name: p.pair, dex: p.dex, liq: fmt(p.liquidityUsd), vol: fmt(p.volume24hUsd) }))} asOf={PO?.fetchedAt?.slice(0, 10) || ''} />
+    {show8k && <EightKBanner k={k8} />}
 
     <section id="stack"><h2 className="sec-h">The stack</h2><p className="sub" style={{ margin: '0 0 28px' }}>If MSTR is amplified BTC, STRATEGY is amplified MSTR. Three layers, one trade.</p>
       <div className="g3">
@@ -29,6 +33,8 @@ export default function P() {
         <div className="layer" style={{ background: 'var(--ink)', color: 'var(--bg)' }}><div className="k" style={{ color: 'var(--bg)' }}>Layer 02</div><div className="d">$MSTR</div><div className="say" style={{ fontSize: 13 }}>Each share = {F8?.satsPerShare ? num(F8.satsPerShare) : '—'} sats. Amplified bitcoin, now a token, trading 24/7.</div></div>
         <div className="layer" style={{ background: 'var(--red)', color: 'var(--on-red)', boxShadow: '6px 6px 0 var(--ink)' }}><div className="k" style={{ color: 'var(--on-red)' }}>Layer 03</div><div className="d">$STRATEGY</div><div className="say" style={{ fontSize: 13 }}>Every 1M coins = {p1} MSTR in the pool. Amplified MSTR. You are here.</div></div>
       </div></section>
+
+    <ShareOfSupply F8={F8} S={S} RH={RH} />
 
     <section id="ways" style={{ scrollMarginTop: 16 }}><h2 className="sec-h">Two ways to win</h2>
       <div className="g2" style={{ gridTemplateColumns: '1fr 1fr', marginTop: 28 }}>
