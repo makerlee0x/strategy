@@ -370,7 +370,7 @@
           ></w3m-connect-external-widget>`;case"recommended":return(0,i.dy)`<w3m-connect-recommended-widget
             .wallets=${a}
             tabIdx=${(0,d.o)(this.tabIdx)}
-          ></w3m-connect-recommended-widget>`;default:return console.warn(`Unknown connector type: ${t}`),null}})}};tt.styles=Z,Q([(0,r.Cb)()],tt.prototype,"tabIdx",void 0),Q([(0,r.SB)()],tt.prototype,"connectors",void 0),Q([(0,r.SB)()],tt.prototype,"recommended",void 0),Q([(0,r.SB)()],tt.prototype,"featured",void 0),tt=Q([(0,c.Mo)("w3m-connector-list")],tt);var te=o(8521),to=o(1498),ti=(0,i.iv)`
+          ></w3m-connect-recommended-widget>`;default:return console.warn(`Unknown connector type: ${t}`),null}})}};tt.styles=Z,Q([(0,r.Cb)()],tt.prototype,"tabIdx",void 0),Q([(0,r.SB)()],tt.prototype,"connectors",void 0),Q([(0,r.SB)()],tt.prototype,"recommended",void 0),Q([(0,r.SB)()],tt.prototype,"featured",void 0),tt=Q([(0,c.Mo)("w3m-connector-list")],tt);var te=o(9965),to=o(1498),ti=(0,i.iv)`
   :host {
     display: inline-flex;
     background-color: var(--wui-color-gray-glass-002);
