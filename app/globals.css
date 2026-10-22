@@ -155,6 +155,7 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 .term-cursor{display:inline-block;width:12px;height:21px;background:#ff5e66;box-shadow:0 0 10px #ff5e66;margin-left:1px;animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
 .term-box{border:1px solid #8a1d24;padding:10px 14px;margin-bottom:14px}.term-box h2{margin:0 0 6px;font-family:'VT323',monospace;font-weight:400;font-size:20px;letter-spacing:.08em;text-shadow:inherit;border:0;padding:0;display:block;text-transform:none}
 .term-row{display:flex;justify-content:space-between;gap:12px}
+.term-crt .inv{background:#ff5e66;color:#0b0203;text-shadow:none;padding:0 6px}.term-log .term-box{margin:6px 0 10px}
 .term-tick{margin-top:14px;border-top:1px solid #8a1d24;padding-top:8px;overflow:hidden;white-space:nowrap}.term-tick>div{display:inline-flex;animation:tick 40s linear infinite}
 .term-side{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:4px;font-size:9px;letter-spacing:.16em;color:#6e5a52;text-align:center}
 .term-side .ctl{display:flex;flex-direction:column;align-items:center;gap:7px}.term-power{margin-top:auto}
@@ -175,3 +176,23 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 /* Share of supply: "1 in N" with one lit token among N. */
 .oneof{display:grid;grid-template-columns:repeat(auto-fill,minmax(22px,1fr));gap:8px;margin:22px 0 16px}.oneof i{aspect-ratio:1;border-radius:50%;border:2px solid #ffffff55;display:block}
 .oneof i.me{background:#fff;border-color:#fff;box-shadow:0 0 0 4px #ffffff33,0 0 18px #fff}
+/* Buy / swap window: a torn-off order slip. Ivory paper, oxblood type, dashed rules, red rubber stamp.
+   Re-maps the theme variables inside the window so the swap form follows. */
+.mcard{--ink:#1c0809;--bg:#fffaf6;--panel:#f3e6dc;--red-t:#b51d27;--mu:#6e5a52;--rule:#1c080940;position:relative;background:#f3e6dc;color:#1c0809;box-shadow:none;padding:10px 0;
+  -webkit-mask:radial-gradient(circle at 8px 0,#0000 6px,#000 6.5px) top/16px 51% repeat-x,radial-gradient(circle at 8px 100%,#0000 6px,#000 6.5px) bottom/16px 51% repeat-x;
+  mask:radial-gradient(circle at 8px 0,#0000 6px,#000 6.5px) top/16px 51% repeat-x,radial-gradient(circle at 8px 100%,#0000 6px,#000 6.5px) bottom/16px 51% repeat-x}
+.mback{background:#0a0203d9}
+.mcard .mhead{background:transparent;border-bottom:2px dashed var(--ink);padding:14px 20px}.mcard .mhead .k{color:#b51d27;font-weight:700}
+.mcard .mbody{padding:16px 20px 18px}
+.mcard .mx{border:2px solid var(--ink)}.mcard .mx:hover,.mcard .mx:focus-visible{background:var(--ink);color:#f3e6dc}
+.mstampx{position:absolute;right:76px;top:58px;transform:rotate(-8deg);border:3px solid #d9232e;color:#d9232e;font-family:'Bungee',sans-serif;font-size:12px;padding:3px 8px;opacity:.8;pointer-events:none;z-index:1}
+.mcard .mopt{border:2px dashed var(--ink);background:var(--bg);color:var(--ink);padding:14px 16px}.mcard .mopt:hover{border-style:solid}
+.mcard .mopt.hot{background:var(--ink);color:#f3e6dc;border-style:solid}.mcard .mopt.hot .k{color:#c7aaa3}.mcard .mopt.hot .stamp{color:#ff5a63}
+.mcard .mopt.off{opacity:.55;cursor:default}.mcard .mopt.off:hover{border-style:dashed}
+.mhint{max-width:150px;text-align:right;text-transform:none;letter-spacing:0}
+.mcard .sw-card{border:2px dashed var(--ink);background:var(--bg)}.mcard .sw-amt{color:var(--ink)}.mcard .sw-arrow{color:var(--ink)}
+.mcard .sw-meta td{border-bottom:1px solid var(--rule)}
+.mcard .sw-go{font-family:'Bungee',sans-serif;font-weight:400;font-size:17px;letter-spacing:.04em}.mcard .sw-go:disabled{background:#c9b2a3;color:#1c0809;opacity:1}
+.mcard .sw-warn{background:#d9232e12}
+@media(max-width:760px){.mstampx{display:none}.mhint{display:none}}
+body:has(.mback) .buybar{display:none}

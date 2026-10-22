@@ -1,17 +1,18 @@
 'use client';
 // An old-school terminal with fixed commands filled from live data. No AI: every answer is written here.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { fmt, num } from '../data'; import { useLive } from '../../lib/useLive'; import { TERMINAL } from '../feeds'; import { summarize } from '../../lib/metrics.mjs'; import Actions, { ADDR, copyText } from '../strategy/Modals';
+import { fmt, num } from '../data'; import { useLive } from '../../lib/useLive'; import { TERMINAL } from '../feeds'; import { summarize } from '../../lib/metrics.mjs'; import { ADDR, copyText } from '../strategy/Modals'; import { useBuyExe } from './buyexe';
 const P = 'C:\\$STRATEGY>';
 const n2 = v => v == null || !Number.isFinite(v) ? '—' : v.toFixed(2);
 const pc = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 const dt = d => d ? new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase() : '—';
-const HELP = ['STACK · PRICE · POOL · MSTR · 8K', 'BUY · CA · GM · CLEAR · EXIT', '(THERE ARE OTHERS.)'];
+const HELP = ['STACK · PRICE · POOL · MSTR · 8K', 'BUY · SELL · CA · GM · CLEAR · EXIT', '(THERE ARE OTHERS.)'];
 export default function View({ init }) {
   const [SM, PB, H, F8, T, OH] = useLive(TERMINAL, undefined, init);
   const [log, setLog] = useState([]), [cmd, setCmd] = useState(''), [hist, setHist] = useState({ list: [], i: -1 });
   const [bright, setBright] = useState(1), [on, setOn] = useState(true), [laser, setLaser] = useState(false), [copied, setCopied] = useState(false);
   const inp = useRef(), scr = useRef(), room = useRef();
+  const exe = useBuyExe(setLog);
   // Fit the terminal to one screen: measure where it starts (the menu wraps differently by width).
   useLayoutEffect(() => { const fit = () => { const el = room.current; if (el) el.style.setProperty('--term-top', Math.round(el.getBoundingClientRect().top + scrollY) + 'px'); }; fit(); addEventListener('resize', fit); return () => removeEventListener('resize', fit); }, []);
   const M = SM?.display || {}, s = PB?.strategy && !PB.strategy.error ? PB.strategy : null, S = H?.days?.length ? summarize(H.days) : null;
@@ -27,7 +28,7 @@ export default function View({ init }) {
       case 'pool': out = [['MSTR IN POOL ', num(pool)], ['· LOCKED LAUNCH LIQUIDITY ', num(s ? pool - fee : null)], ['· COMPOUNDED BY FEES ', num(fee)], ['MSTR YIELD 30D ', pc(S?.yield30d) + (H?.sample ? ' (SAMPLE)' : '')], 'PART OF EVERY FEE GOES BACK IN. THE FLOOR ONLY RISES.']; break;
       case 'mstr': out = [['MSTR TOKENS ON-CHAIN ', num(t.circ)], ['WORTH ', fmt(t.mcap)], ['TRADED WHILE NASDAQ IS CLOSED ', OH?.all?.d30?.closedPct != null ? Math.round(OH.all.d30.closedPct) + '% (30D)' : '—'], 'MORE: /MSTR']; break;
       case '8k': out = f ? [['LATEST 8-K FILED ', dt(f.filingDate)], ['STRATEGY₿ INC. HOLDS ', num(f.btcHeld) + ' BTC'], ['CHANGE ', (F8.weeklyChangeBtc >= 0 ? '+' : '') + num(F8.weeklyChangeBtc) + ' BTC'], { href: f.doc, t: 'OPEN THE FILING ↗' }] : ['NO FILING LOADED. TRY AGAIN SOON.']; break;
-      case 'buy': out = ['OPENING BUY...']; setTimeout(() => { location.hash = 'buy'; }, 350); break;
+      case 'buy': case 'sell': setLog(l => [...l.slice(-80), { c: raw.trim(), out: [] }]); exe.start(c); return;
       case 'ca': copyText(ADDR.STRATEGY); out = [['$STRATEGY ', ADDR.STRATEGY], ['MSTR (ROBINHOOD) ', ADDR.MSTR], 'COPIED $STRATEGY TO CLIPBOARD.']; break;
       case 'gm': out = ['GM. MSTR TRADES 24/7 ON-CHAIN. NASDAQ IS CLOSED.', 'HOLD. HOLD. AMPLIFY.']; break;
       case 'gn': out = ['GN. THE POOL DOES NOT SLEEP.']; break;
@@ -49,12 +50,12 @@ export default function View({ init }) {
   useEffect(() => { if (!booted.current && pool != null) { booted.current = true; run('stack'); } }, [pool]); // first answer once live numbers are in
   useEffect(() => { if (matchMedia('(pointer: fine)').matches) inp.current?.focus({ preventScroll: true }); }, []); // no keyboard pop-up on phones
   useEffect(() => { if (scr.current) scr.current.scrollTop = scr.current.scrollHeight; }, [log]);
-  const submit = e => { e.preventDefault(); run(cmd); if (cmd.trim()) setHist(h => ({ list: [...h.list, cmd], i: -1 })); setCmd(''); };
+  const submit = e => { e.preventDefault(); exe.active ? exe.answer(cmd) : run(cmd); if (cmd.trim()) setHist(h => ({ list: [...h.list, cmd], i: -1 })); setCmd(''); };
   const key = e => {
     if (e.key === 'ArrowUp' && hist.list.length) { e.preventDefault(); const i = hist.i < 0 ? hist.list.length - 1 : Math.max(0, hist.i - 1); setHist({ ...hist, i }); setCmd(hist.list[i]); }
     if (e.key === 'ArrowDown' && hist.i >= 0) { e.preventDefault(); const i = hist.i + 1; if (i >= hist.list.length) { setHist({ ...hist, i: -1 }); setCmd(''); } else { setHist({ ...hist, i }); setCmd(hist.list[i]); } }
   };
-  const line = (x, i) => typeof x === 'string' ? <div key={i}>{x}</div> : x.href ? <div key={i}><a href={x.href} target="_blank" rel="noopener">{x.t}</a></div> : <div key={i}><span className="dim">{x[0]}</span><span className="hi">{x[1]}</span></div>;
+  const line = (x, i) => typeof x === 'string' ? <div key={i}>{x}</div> : x.key ? <div key={i}><span className="inv">{x.key}</span> {x.t} <span className="dim">{x.d}</span></div> : x.big ? <div key={i} className="hi" style={{ fontSize: '1.4em', margin: '4px 0' }}>{x.big}</div> : x.href ? <div key={i}><a href={x.href} target="_blank" rel="noopener">{x.t}</a></div> : <div key={i}><span className="dim">{x[0]}</span><span className="hi">{x[1]}</span></div>;
   return (<div className="term-room" ref={room}>
     <div className="term-case">
       <div className="term-top"><div><div className="term-badge">$STRATEGY</div><div className="term-model">STRATEGY COIN / MODEL 4926</div></div>
@@ -68,8 +69,8 @@ export default function View({ init }) {
             <div className="dim" style={{ marginBottom: 12 }}>TYPE <span className="hi">HELP</span> FOR COMMANDS.</div>
             <div className="term-split">
               <div className="term-log" ref={scr} aria-live="polite">
-                {log.map((e, i) => <div key={i} style={{ marginBottom: 10 }}>{e.c != null && <div><span className="dim">{P}</span> <span className="you">{e.c}</span></div>}<div style={{ paddingLeft: e.c != null ? 16 : 0 }}>{e.out.map(line)}</div></div>)}
-                <form onSubmit={submit} className="term-prompt"><label htmlFor="term-in" className="dim">{P}</label>&nbsp;<span className="you">{cmd}</span><span className="term-cursor" aria-hidden="true" />
+                {log.map((e, i) => <div key={e.id || i} style={{ marginBottom: e.p ? 2 : 10 }}>{e.c != null && <div><span className="dim">{e.p || P}</span> <span className="you">{e.c}</span></div>}{e.out.length > 0 && <div className={e.box ? 'term-box' : ''} style={{ paddingLeft: e.c != null || e.box ? 16 : 0 }}>{e.out.map(line)}</div>}</div>)}
+                <form onSubmit={submit} className="term-prompt"><label htmlFor="term-in" className="dim">{exe.prompt || P}</label>&nbsp;<span className="you">{cmd}</span><span className="term-cursor" aria-hidden="true" />
                   <input id="term-in" ref={inp} value={cmd} onChange={e => setCmd(e.target.value)} onKeyDown={key} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="send" aria-label="Type a command" maxLength={60} /></form>
               </div>
               <div>
@@ -89,5 +90,5 @@ export default function View({ init }) {
         </div>
       </div>
     </div>
-    <Actions bare pools={[]} asOf="" /></div>);
+    </div>);
 }
