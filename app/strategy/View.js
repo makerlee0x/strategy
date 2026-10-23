@@ -34,9 +34,9 @@ export default function View({ init }) {
       <div className="tile s8"><div className="lbl">How the pool works</div>
         <div className="steps3">{['$STRATEGY trades against real tokenized MSTR in one Uniswap pool.', 'Every buy adds MSTR to the pool. Every sell takes some out.', 'Part of every trade’s fee is added back to the pool, permanently. That’s the floor: it only rises.'].map((t, i) =>
           <div key={i}><div className="num ox" style={{ fontSize: 28 }}>0{i + 1}</div><p style={{ fontSize: 14, lineHeight: 1.5, margin: '8px 0 0' }}>{t}</p></div>)}</div>
-        <p className="soft" style={{ fontSize: 12, margin: '18px 0 0' }}>The launch liquidity is locked and can’t be withdrawn. Pool MSTR is the pool’s inventory, not a redemption right.</p>
+        <p className="soft" style={{ fontSize: 12, margin: '18px 0 0' }}>The liquidity pool is locked and can’t be withdrawn. Pool MSTR is the pool’s inventory, not a redemption right.</p>
         <details className="calc" style={{ marginTop: 12 }}><summary>How we calculate each number</summary><dl>{CALC.map(([a, b]) => <div key={a}><dt>{a}</dt><dd>{b}</dd></div>)}</dl></details></div>
-      <div className="tile-dash s4 stack"><div className="lbl" style={{ color: 'var(--red-t)' }}>STRATEGY COIN Reserve</div><div className="num" style={{ fontSize: 30 }}>Coming soon</div><div style={{ fontSize: 13, opacity: .8 }}>A public wallet that stacks MSTR for STRATEGY COIN.</div></div>
+      <div className="tile-dash s4 stack"><div className="lbl" style={{ color: 'var(--red-t)' }}>STRATEGY COIN Reserve</div><div className="num" style={{ fontSize: 30 }}>Coming soon</div></div>
       <div className="tile-red s12" id="buy-band" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18 }}>
         <a className="pillbtn" href="#buy" style={{ background: 'var(--bg)', color: 'var(--on-red)' }}>buy $strategy</a>
         <CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · Robinhood" addr={ADDR.MSTR} />

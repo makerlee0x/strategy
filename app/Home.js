@@ -16,7 +16,7 @@ export default function Home({ init }) {
     <section className="hero-red"><div className="in">
       <p className="steps">step 1: hold MSTR<br />step 2: keep holding MSTR<br />step 3: hold the thing that holds MSTR</p>
       <h1>HOLD.<br />HOLD.<br /><span>AMPLIFY.</span></h1>
-      <p className="lede">$STRATEGY is paired with tokenized MSTR. Every trade stacks MSTR for the Treasury.<br />If MSTR is amplified ₿itcoin, $STRATEGY is amplified MSTR.<br />That’s the Saylor strategy.</p>
+      <p className="lede">$STRATEGY is paired with tokenized MSTR. Every trade stacks MSTR for the Treasury.<br />That’s the strategy.</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}><a className="pillbtn" href="#buy" style={{ background: '#ffffff', color: '#b51d27' }}>BUY $STRATEGY</a><span className="pillbtn" style={{ background: 'var(--bg)', color: '#ffffff', cursor: 'default' }}>STAKE · SOON</span></div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 26 }}><CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · ROBINHOOD" addr={ADDR.MSTR} /></div>
       <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, margin: '10px 0 0', color: '#ffe3e5' }}>Both live on Robinhood Chain. Add them to your wallet so you can see the pair.</p>

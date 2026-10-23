@@ -39,7 +39,7 @@ export default function View({ init }) {
       case 'wen moon': case 'wen': out = ['NOT FINANCIAL ADVICE. HOLD. HOLD. AMPLIFY.']; break;
       case 'sudo': case 'sudo su': out = ['NICE TRY.']; break;
       case 'ls': case 'dir': out = ['AMPLIFIED_MSTR.EXE   README.TXT   RESERVE/ (EMPTY. COMING SOON.)']; break;
-      case 'cat readme.txt': case 'type readme.txt': out = ['$STRATEGY IS PAIRED WITH TOKENIZED MSTR.', 'IF MSTR IS AMPLIFIED BITCOIN, $STRATEGY IS AMPLIFIED MSTR.', 'THAT’S THE SAYLOR STRATEGY.']; break;
+      case 'cat readme.txt': case 'type readme.txt': out = ['$STRATEGY IS PAIRED WITH TOKENIZED MSTR.', 'IF MSTR IS AMPLIFIED BITCOIN, $STRATEGY IS AMPLIFIED MSTR.', 'THAT’S THE STRATEGY.']; break;
       case 'clear': case 'cls': setLog([]); return;
       case 'exit': case 'eject': out = ['EJECTING...']; setTimeout(() => document.querySelector('.term-side .eject')?.click(), 350); break;
       default: out = ['BAD COMMAND OR FILE NAME. TRY HELP.'];
