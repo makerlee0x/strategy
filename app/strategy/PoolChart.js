@@ -11,10 +11,15 @@ function view(days, range) {
   for (let i = 0; i < days.length; i += 7) { const g = days.slice(i, i + 7), last = g[g.length - 1]; out.push({ ...last, volUsd: g.some(x => x.volUsd != null) ? g.reduce((a, x) => a + (x.volUsd || 0), 0) : null }); }
   return out;
 }
-export default function PoolChart({ days, sample }) {
+export default function PoolChart({ days, live, since }) {
   const [range, setRange] = useState('D');
-  const pts = days?.length ? view(days, range) : [];
-  if (pts.length < 2) return <div className="soft" style={{ padding: '60px 0', fontSize: 13 }}>Chart appears once the pool has two days of history.</div>;
+  // Recorded days, plus today's live reading so the line reaches the present.
+  const all = [...(days || [])]; if (live && (!all.length || all[all.length - 1].d < live.d)) all.push(live);
+  const pts = all.length ? view(all, range) : [];
+  if (pts.length < 2) return <>
+    <div className="lbl">MSTR in the pool</div><div className="soft" style={{ fontSize: 12, marginTop: 4 }}>$STRATEGY/MSTR · Uniswap v4 · Robinhood Chain</div>
+    <div className="num" style={{ fontSize: 72, margin: '48px 0 10px' }}>{live ? Math.round(live.poolMstr).toLocaleString('en-US') : '—'}</div>
+    <div style={{ fontSize: 13, maxWidth: 460, lineHeight: 1.55 }}>MSTR in the pool right now. The chart records one point a day{since ? ' since ' + dt(since) : ''} and draws itself as the days add up: the dotted line for all MSTR in the pool, the red floor for MSTR compounded by fees.</div></>;
   const max = Math.max(...pts.map(p => p.poolMstr)) * 1.12, vols = pts.map(p => p.volUsd).filter(v => v != null), vmax = vols.length ? Math.max(...vols) : 0;
   const x = i => X0 + i * (X1 - X0) / (pts.length - 1), y = v => Y0 - v / max * (Y0 - YT);
   const floor = 'M' + X0 + ' ' + Y0 + pts.map((p, i) => ' L' + x(i).toFixed(1) + ' ' + y(p.feeMstr).toFixed(1)).join('') + ' L' + X1 + ' ' + Y0 + ' Z';
@@ -24,7 +29,7 @@ export default function PoolChart({ days, sample }) {
   const step = Math.max(100, Math.round(max / 3 / 100) * 100), last = pts[pts.length - 1];
   return <>
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-      <div><div className="lbl">MSTR in the pool</div><div className="soft" style={{ fontSize: 12, marginTop: 4 }}>$STRATEGY/MSTR · Uniswap v4 · Robinhood Chain {sample && <span className="tag sample" style={{ color: '#5e4a44' }}>SAMPLE</span>}</div></div>
+      <div><div className="lbl">MSTR in the pool</div><div className="soft" style={{ fontSize: 12, marginTop: 4 }}>$STRATEGY/MSTR · Uniswap v4 · Robinhood Chain</div></div>
       <div className="seg2" role="group" aria-label="Chart range">{[['D', 'DAYS'], ['W', 'WEEKS'], ['A', 'ALL']].map(([k, l]) => <button key={k} type="button" className={k === range ? 'on' : ''} aria-pressed={k === range} onClick={() => setRange(k)}>{l}</button>)}</div></div>
     <svg viewBox="0 0 760 330" style={{ width: '100%', height: 'auto', display: 'block', marginTop: 16 }} role="img" aria-label={`MSTR in the pool, ${dt(pts[0].d)} to ${dt(last.d)}: ${Math.round(last.poolMstr)} MSTR now, ${Math.round(last.feeMstr)} of it compounded from fees.`}>
       {[step, step * 2].map(v => <g key={v}><line x1={X0} x2={X1} y1={y(v)} y2={y(v)} stroke="#1c080922" /><text x="0" y={y(v) + 4} fontSize="11" fill="#5e4a44" fontFamily="Space Mono, monospace">{v}</text></g>)}
