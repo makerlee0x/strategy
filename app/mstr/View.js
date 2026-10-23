@@ -12,7 +12,7 @@ export default function View({ init }) {
   useEffect(() => { const h = () => { const k = location.hash.slice(1); if (TABS.some(t => t[0] === k)) setTab(k); }; h(); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h); }, []);
   const t = T?.totals || {}, venues = (CH?.chains || []).filter(c => c.vol24Usd > 0).sort((a, b) => b.vol24Usd - a.vol24Usd), vmax = venues[0]?.vol24Usd || 1;
   const rh = (CH?.chains || []).find(c => c.key === 'robinhood'), off = OH?.all?.d30?.closedPct, f = F8?.latest, chg = F8?.weeklyChangeBtc;
-  const rows = (C?.rows || []).filter(r => r.chain === 'Robinhood Chain'), morpho = rows.find(r => r.protocol === 'Morpho' && r.token === 'MSTR'), teller = rows.find(r => r.protocol === 'Teller');
+  const rows = (C?.rows || []).filter(r => r.chain === 'Robinhood Chain'), teller = rows.find(r => r.protocol === 'Teller');
   const hl = (PP?.markets || []).find(m => m.venue === 'Hyperliquid'), li = (PP?.markets || []).find(m => m.venue === 'Lighter');
   return (<>
     <div className="pagehead"><div><div className="lbl" style={{ color: 'var(--red-t)' }}>For MSTR token holders · <St d={T} /></div><h1>MSTR, ON-CHAIN.</h1>
@@ -40,11 +40,11 @@ export default function View({ init }) {
         <Risk>if MSTR moves a lot, you end up holding more of whichever side fell. Fees change with volume.</Risk><Out href="https://app.uniswap.org/explore/tokens/robinhood/0xec262a75e413fAfD0dF80480274532C79D42da09">Browse MSTR pools on Uniswap</Out></div>
       <div className="tile s4"><div className="lbl ox">02 · Borrow</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>Keep your MSTR and borrow stablecoins against it.</p>
         {teller && <div className="orow"><span><a href={teller.url} target="_blank" rel="noopener"><b>Teller</b> ↗</a> · fixed term</span><span>no margin calls</span></div>}
-        {morpho && <div className="orow"><span><a href={morpho.url} target="_blank" rel="noopener"><b>Morpho</b> ↗</a> · MSTR → {morpho.borrowAsset}</span><span>{pct(morpho.maxLtvPct, 1)} LTV · {pct(morpho.borrowApyPct)}</span></div>}
+        <div className="orow"><span><a href="https://www.longbow.cash/borrow/MSTR" target="_blank" rel="noopener"><b>Longbow</b> ↗</a> · borrow against MSTR</span><span></span></div>
         <Risk>if MSTR falls past the liquidation level, your collateral is sold.</Risk></div>
       <div className="tile-line s4"><div className="lbl" style={{ color: 'var(--red-t)' }}>03 · Trade 24/7</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>MSTR perpetual futures trade nights and weekends.</p>
         {hl && <div className="orow" style={{ borderColor: 'var(--rule)' }}><span><a href="https://app.hyperliquid.xyz/trade/xyz:MSTR" target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}><b>Hyperliquid</b> ↗</a> · {hl.market}</span><span>{fmt(hl.vol24Usd)} · 24h</span></div>}
-        {li && <div className="orow" style={{ borderColor: 'var(--rule)' }}><span><a href="https://lighter.xyz/" target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}><b>Lighter</b> ↗</a> · {li.market}</span><span>{fmt(li.vol24Usd)} · 24h</span></div>}
+        {li && <div className="orow" style={{ borderColor: 'var(--rule)' }}><span><a href="https://app.lighter.xyz/trade/MSTR" target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}><b>Lighter</b> ↗</a> · {li.market}</span><span>{fmt(li.vol24Usd)} · 24h</span></div>}
         <p className="risk" style={{ margin: '14px 0 0', color: 'var(--ink)' }}>Risk: perps use leverage. A move against you can wipe out your margin.</p></div>
     </div>
 
