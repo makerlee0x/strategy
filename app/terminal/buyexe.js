@@ -24,10 +24,28 @@ export function useBuyExe(setLog) {
 
   function start(side) {
     Object.assign(S.current, { side, pay: null, recv: null, amt: null, quote: null });
-    say(['LOADING ' + (side === 'sell' ? 'SELL' : 'BUY') + '.EXE ........ OK']);
+    say(['LOADING ' + (side === 'sell' ? 'SELL' : 'BUY') + '.EXE ........ OK', 'BACK · CLEAR · Q OR ESC TO QUIT']);
     if (side === 'sell') return goWallet();
+    menu();
+  }
+  function menu() {
     say(['BUY $STRATEGY', { key: '1', t: 'SWAP HERE', d: 'ETH OR MSTR → $STRATEGY, IN THIS TERMINAL' }, { key: '2', t: 'FOMO', d: 'FOMO.FAMILY ↗' }, { key: '3', t: 'LONG', d: 'APP.LONG.XYZ ↗' }, { key: '4', t: 'LEVERAGE', d: 'COMING SOON' }, { key: 'Q', t: 'QUIT', d: '' }], { box: true });
     ask('menu', 'SELECT [1-4]>');
+  }
+  function quit() { if (S.current.step === 'busy') return say(['PLEASE WAIT.']); say([name() + ' CLOSED.']); end(); }
+  const askPay = () => ask('pay', S.current.side === 'sell' ? 'RECEIVE [ETH/MSTR]>' : 'PAY WITH [ETH/MSTR]>');
+  const askAmount = () => ask('amount', `AMOUNT IN ${sym(S.current.pay)} (OR MAX)>`);
+  // One step back. From the first step, back closes the program.
+  function back() {
+    const s = S.current, first = () => { if (s.side === 'sell') return quit(); say(['BACK TO THE MENU.']); return menu(); };
+    switch (s.step) {
+      case 'menu': return quit();
+      case 'wallet': return first();
+      case 'pay': return first();
+      case 'amount': say(['BACK.']); return askPay();
+      case 'confirm': say(['BACK. QUOTE DISCARDED.']); return askAmount();
+      case 'busy': return say(['PLEASE WAIT.']);
+    }
   }
   async function goWallet() {
     const s = S.current;
@@ -40,7 +58,7 @@ export function useBuyExe(setLog) {
     const s = S.current; let bal = '1.2400';
     if (!mock()) try { bal = fmtN(fromUnits(await balanceOf(ETH, s.acct), 18)); } catch (e) { bal = '—'; }
     say([['WALLET ', short(s.acct) + ' · ROBINHOOD CHAIN · ' + bal + ' ETH']]);
-    ask('pay', s.side === 'sell' ? 'RECEIVE [ETH/MSTR]>' : 'PAY WITH [ETH/MSTR]>');
+    askPay();
   }
   async function quote() {
     const s = S.current;
@@ -48,7 +66,7 @@ export function useBuyExe(setLog) {
     const id = say(['FETCHING QUOTE ...']);
     try {
       if (mock()) { await sleep(600); s.quote = MOCK; } else s.quote = (await getQuote({ acct: s.acct, payTok: s.pay, recvTok: s.recv, w: s.w, slip: s.slip })).quote;
-    } catch (e) { upd(id, ['QUOTE FAILED: ' + String(e.message || e).toUpperCase()]); return ask('amount', `AMOUNT IN ${sym(s.pay)} (OR MAX)>`); }
+    } catch (e) { upd(id, ['QUOTE FAILED: ' + String(e.message || e).toUpperCase()]); return askAmount(); }
     const q = s.quote, imp = Number(q.fees?.totalImpactPct ?? q.fees?.swapImpactPct), fee = q.fees?.interfaceFeeBps ?? DEFAULT_FEE_BPS;
     upd(id, ['QUOTE · ' + (q.routeLabels || ['RELAY']).join(' · ').toUpperCase()]);
     say([['YOU PAY       ', s.amt + ' ' + sym(s.pay) + (q.payAmountUsd ? ' (≈' + usd(q.payAmountUsd) + ')' : '')], ['YOU GET       ', (s.recv === STRAT ? Math.floor(Number(q.receiveAmount)).toLocaleString('en-US') : fmtN(q.receiveAmount)) + ' ' + sym(s.recv)], ['MIN AFTER ' + s.slip + '% SLIPPAGE  ', Math.floor(Number(q.receiveAmount) * (1 - s.slip / 100)).toLocaleString('en-US')],
@@ -82,7 +100,10 @@ export function useBuyExe(setLog) {
     const s = S.current, a = raw.trim().toLowerCase();
     setLog(l => [...l.slice(-80), { p: prompt, c: raw.trim(), out: [] }]);
     if (s.step === 'busy') return say(['PLEASE WAIT.']);
-    if (['q', 'quit', 'exit', 'cancel'].includes(a)) { say([name() + ' CLOSED.']); return end(); }
+    if (['q', 'quit', 'exit', 'cancel', 'esc'].includes(a)) return quit();
+    if (a === 'back' || a === 'b') return back();
+    if (a === 'clear' || a === 'cls') return setLog([]);
+    if (a === 'help' || a === '?') return say(['BACK · CLEAR · Q OR ESC TO QUIT']);
     if (s.step === 'menu') {
       if (a === '1') return goWallet();
       if (a === '2' || a === '3') { const [u, n] = a === '2' ? [FOMO, 'FOMO.FAMILY'] : [LONG, 'APP.LONG.XYZ']; window.open(u, '_blank', 'noopener'); say(['OPENING ' + n + ' ...', { href: u, t: 'IF NOTHING OPENED: ' + n + ' ↗' }]); return end(); }
@@ -100,7 +121,7 @@ export function useBuyExe(setLog) {
       const t = a === 'eth' ? ETH : MSTR;
       if (s.side === 'sell') { s.pay = STRAT; s.recv = t; } else { s.pay = t; s.recv = STRAT; }
       s.bal = null; if (!mock()) balanceOf(s.pay, s.acct).then(b => { s.bal = b; }).catch(() => {});
-      return ask('amount', `AMOUNT IN ${sym(s.pay)} (OR MAX)>`);
+      return askAmount();
     }
     if (s.step === 'amount') {
       let v = a;
@@ -117,5 +138,5 @@ export function useBuyExe(setLog) {
       return say(['TYPE Y OR N.']);
     }
   }
-  return { prompt, start, answer, active: prompt != null };
+  return { prompt, start, answer, quit, active: prompt != null };
 }

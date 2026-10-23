@@ -52,6 +52,7 @@ export default function View({ init }) {
   useEffect(() => { if (scr.current) scr.current.scrollTop = scr.current.scrollHeight; }, [log]);
   const submit = e => { e.preventDefault(); exe.active ? exe.answer(cmd) : run(cmd); if (cmd.trim()) setHist(h => ({ list: [...h.list, cmd], i: -1 })); setCmd(''); };
   const key = e => {
+    if (e.key === 'Escape' && exe.active) { e.preventDefault(); setLog(l => [...l.slice(-80), { p: exe.prompt, c: 'ESC', out: [] }]); exe.quit(); setCmd(''); return; }
     if (e.key === 'ArrowUp' && hist.list.length) { e.preventDefault(); const i = hist.i < 0 ? hist.list.length - 1 : Math.max(0, hist.i - 1); setHist({ ...hist, i }); setCmd(hist.list[i]); }
     if (e.key === 'ArrowDown' && hist.i >= 0) { e.preventDefault(); const i = hist.i + 1; if (i >= hist.list.length) { setHist({ ...hist, i: -1 }); setCmd(''); } else { setHist({ ...hist, i }); setCmd(hist.list[i]); } }
   };
