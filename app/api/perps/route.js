@@ -1,5 +1,6 @@
 import { preflight, cachedFetch, json, getJson } from '../../../lib/guard';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 const HL = 'https://api.hyperliquid.xyz/info';
 async function hyperliquid() {
   const dexs = (await getJson(HL, { method: 'POST', body: JSON.stringify({ type: 'perpDexs' }) })).filter(Boolean).map(d => d.name);

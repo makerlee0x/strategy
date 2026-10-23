@@ -7,18 +7,21 @@ const dt = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 
 const Risk = ({ children }) => <p className="risk" style={{ margin: '14px 0 0' }}>Risk: {children}</p>;
 const Out = ({ href, children }) => <a href={href} target="_blank" rel="noopener" style={{ display: 'inline-block', marginTop: 14, fontSize: 13, fontWeight: 700 }}>{children} ↗</a>;
 export default function View({ init }) {
-  const [T, SM, F8, OH, CH, C, PP] = useLive(MSTR, undefined, init);
+  const [T, SM, F8, OH, CH, PP] = useLive(MSTR, undefined, init);
   const [tab, setTab] = useState('overview');
-  useEffect(() => { const h = () => { const k = location.hash.slice(1); if (TABS.some(t => t[0] === k)) setTab(k); }; h(); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h); }, []);
+  // Highlight the tab for the section being read, and follow it as the page scrolls either way.
+  useEffect(() => {
+    const spy = () => { let cur = TABS[0][0]; for (const [id] of TABS) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < innerHeight * 0.35) cur = id; } if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = TABS[TABS.length - 1][0]; setTab(cur); };
+    spy(); addEventListener('scroll', spy, { passive: true }); addEventListener('resize', spy); return () => { removeEventListener('scroll', spy); removeEventListener('resize', spy); };
+  }, []);
   const t = T?.totals || {}, venues = (CH?.chains || []).filter(c => c.vol24Usd > 0).sort((a, b) => b.vol24Usd - a.vol24Usd), vmax = venues[0]?.vol24Usd || 1;
   const rh = (CH?.chains || []).find(c => c.key === 'robinhood'), off = OH?.all?.d30?.closedPct, f = F8?.latest, chg = F8?.weeklyChangeBtc;
-  const rows = (C?.rows || []).filter(r => r.chain === 'Robinhood Chain'), teller = rows.find(r => r.protocol === 'Teller');
   const hl = (PP?.markets || []).find(m => m.venue === 'Hyperliquid'), li = (PP?.markets || []).find(m => m.venue === 'Lighter');
   return (<>
     <div className="pagehead"><div><div className="lbl" style={{ color: 'var(--red-t)' }}>For MSTR token holders · <St d={T} /></div><h1>MSTR, ON-CHAIN.</h1>
       <p className="sub" style={{ fontSize: 15, maxWidth: 620, margin: 0 }}>Strategy₿ Inc. stock (MSTR) now trades as a token, 24/7. How much exists, where it trades, how to put it to work, and how it works.</p></div>
       <CopyAddr light label="MSTR · Robinhood stock token" addr={ADDR.MSTR} /></div>
-    <div className="tabs2" role="navigation" aria-label="On this page">{TABS.map(([k, l]) => <a key={k} href={'#' + k} className={tab === k ? 'on' : ''} aria-current={tab === k ? 'true' : undefined} onClick={() => setTab(k)}>{l.toUpperCase()}</a>)}</div>
+    <div className="tabs2" role="navigation" aria-label="On this page">{TABS.map(([k, l]) => <a key={k} href={'#' + k} className={tab === k ? 'on' : ''} aria-current={tab === k ? 'true' : undefined}>{l.toUpperCase()}</a>)}</div>
 
     <h2 className="sec2" id="overview" style={{ marginTop: 36 }}>Overview</h2><p className="sub" style={{ margin: '0 0 18px' }}>Every issuer, every chain.</p>
     <div className="bento">
@@ -26,9 +29,10 @@ export default function View({ init }) {
       <div className="tile s3 stack"><div className="lbl">Share of MSTR on-chain</div><div className="num ox" style={{ fontSize: 40 }}>{pct(t.pctShares)}</div><div className="soft" style={{ fontSize: 12 }}>of ~{t.sharesBasis ? (t.sharesBasis / 1e6).toFixed(0) : '—'}M shares</div></div>
       <div className="tile s3 stack"><div className="lbl">Traded off-hours</div><div className="num" style={{ fontSize: 40 }}>{pct(off, 0)}</div><div className="soft" style={{ fontSize: 12 }}>of 30-day volume, while Nasdaq was closed</div></div>
       <div className="tile s7"><div className="lbl">Where it trades · 24h DEX volume</div>
+        {!venues.length && <div className="soft" style={{ fontSize: 13, marginTop: 14 }}>{CH && CH.ok === false ? 'Volume data is delayed. Check back in a few minutes.' : 'Loading volume by chain…'}</div>}
         <div style={{ marginTop: 14 }}>{venues.map(c => <div key={c.key} style={{ display: 'grid', gridTemplateColumns: '130px 1fr 64px', gap: 12, alignItems: 'center', padding: '6px 0', fontSize: 13 }}>
           <span style={{ fontWeight: c.key === 'robinhood' ? 700 : 400 }}>{c.chain}</span><span style={{ background: '#1c080914', height: 14 }}><span style={{ display: 'block', height: 14, width: Math.max(1, c.vol24Usd / vmax * 100) + '%', background: c.key === 'robinhood' ? 'var(--red)' : '#1c080966' }} /></span><span style={{ textAlign: 'right' }}>{fmt(c.vol24Usd)}</span></div>)}</div>
-        <div className="soft" style={{ fontSize: 12, marginTop: 10 }}>{fmt(CH?.totalDexVol24Usd)} traded on DEXes, all chains</div></div>
+        {venues.length > 0 && <div className="soft" style={{ fontSize: 12, marginTop: 10 }}>{fmt(CH?.totalDexVol24Usd)} traded on DEXes, all chains</div>}</div>
       <div className="tile-line s5 stack"><div className="lbl">Strategy₿ Inc.’s bitcoin · latest 8-K</div><div className="num" style={{ fontSize: 52 }}>{num(f?.btcHeld)}</div>
         <div style={{ fontSize: 13 }}>{chg != null && <b style={{ color: 'var(--red-t)' }}>{(chg >= 0 ? '+' : '') + num(chg)} BTC</b>}{F8?.previous?.asOf ? ' since ' + F8.previous.asOf.replace(/, \d{4}$/, '').replace(/^(\w{3})\w*/, '$1') : ''}{f?.doc && <> · <a href={f.doc} target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}>8-K filed {dt(f.filingDate)} ↗</a></>}</div></div>
     </div>
@@ -39,7 +43,7 @@ export default function View({ init }) {
         <div className="orow"><span>MSTR pool liquidity</span><b>{fmt(rh?.dexLiquidityUsd)}</b></div><div className="orow"><span>Traded, last 24h</span><b>{fmt(rh?.vol24Usd)}</b></div>
         <Risk>if MSTR moves a lot, you end up holding more of whichever side fell. Fees change with volume.</Risk><Out href="https://app.uniswap.org/explore/tokens/robinhood/0xec262a75e413fAfD0dF80480274532C79D42da09">Browse MSTR pools on Uniswap</Out></div>
       <div className="tile s4"><div className="lbl ox">02 · Borrow</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>Keep your MSTR and borrow stablecoins against it.</p>
-        {teller && <div className="orow"><span><a href={teller.url} target="_blank" rel="noopener"><b>Teller</b> ↗</a> · fixed term</span><span>no margin calls</span></div>}
+        <div className="orow"><span><a href="https://pro.teller.org/borrow?collateral=mstr" target="_blank" rel="noopener"><b>Teller</b> ↗</a> · fixed term</span><span>no margin calls</span></div>
         <div className="orow"><span><a href="https://www.longbow.cash/borrow/MSTR" target="_blank" rel="noopener"><b>Longbow</b> ↗</a> · borrow against MSTR</span><span></span></div>
         <Risk>if MSTR falls past the liquidation level, your collateral is sold.</Risk></div>
       <div className="tile-line s4"><div className="lbl" style={{ color: 'var(--red-t)' }}>03 · Trade 24/7</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>MSTR perpetual futures trade nights and weekends.</p>

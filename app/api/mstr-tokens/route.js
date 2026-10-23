@@ -1,5 +1,6 @@
 import { preflight, cachedFetch, lastGood, json, getJson } from '../../../lib/guard';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 const TOKENS = { 'microstrategy-xstock': 'xStocks (Backed)', 'strategy-tokenized-bstocks': 'bStocks', 'microstrategy-ondo-tokenized-stock': 'Ondo', 'microstrategy-rstock': 'Reality', 'strategy-inc-robinhood-tokenized-stock': 'Robinhood', 'microstrategy-coinbase-tokenized-stock': 'Coinbase', 'strategy-dinari-tokenized-stock': 'Dinari', 'strategy-backpack-securities': 'Backpack', 'microstrategy-incorporated-st0x': 'ST0x' };
 const SHARES_BASIS = Number(process.env.MSTR_SHARES_BASIS || 352534000); // SEC 10-Q Q2-2026 weighted basic; override via env
 function cgUrl() {

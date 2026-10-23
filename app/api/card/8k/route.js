@@ -3,6 +3,7 @@ import { preflight, cachedFetch } from '../../../../lib/guard';
 import { loadFilings } from '../../../../lib/filings';
 import { poolBacking } from '../../../../lib/poolBacking';
 import { eightK, signed } from '../../../../lib/eightk.mjs';
+import { fonts, logo } from '../../../../lib/og';
 export const dynamic = 'force-dynamic';
 // 1200×675 8-K day card (the /8k share image). Same layout as EightKCard in app/eightk.js.
 // ?demo=1 renders labelled sample data, for checking the design without live sources.
@@ -10,20 +11,6 @@ const C = { bg: '#1c0809', panel: '#3a1416', ink: '#f3e6dc', mu: '#c7aaa3', red:
 const DEMO = { filingDate: '2026-10-13', btcHeld: 848250, change: 250, per1M: 1.37 };
 const num = v => v == null ? '—' : Math.round(v).toLocaleString('en-US');
 const day = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-
-async function font(family, weight = 400) {
-  // Without a browser User-Agent, Google Fonts serves TTF, which the image renderer can read.
-  const css = await (await fetch(`https://fonts.googleapis.com/css2?family=${family}:wght@${weight}`, { signal: AbortSignal.timeout(5000) })).text();
-  const url = css.match(/src: url\((.+?)\)/)?.[1]; if (!url) throw new Error('font');
-  return (await fetch(url, { signal: AbortSignal.timeout(5000) })).arrayBuffer();
-}
-async function fonts() {
-  const r = await Promise.allSettled([font('Bungee'), font('Space+Mono', 700)]);
-  return [r[0].status === 'fulfilled' && { name: 'Bungee', data: r[0].value, weight: 400 }, r[1].status === 'fulfilled' && { name: 'Space Mono', data: r[1].value, weight: 700 }].filter(Boolean);
-}
-async function logo(req) {
-  try { const svg = await (await fetch(new URL('/strategy-logo.svg', req.url), { signal: AbortSignal.timeout(4000) })).text(); return 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64'); } catch (_) { return null; }
-}
 
 export async function GET(req) {
   const pf = preflight(req, { browser: { limit: 30 }, anon: { limit: 30 }, prefix: 'card' }); if (pf) return pf;

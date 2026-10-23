@@ -1,5 +1,6 @@
 import { preflight, cachedFetch, lastGood, json, getJson } from '../../../lib/guard';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 // Share of tokenized-MSTR volume traded while Nasdaq is closed.
 // Regular session 09:30–16:00 America/New_York, Mon–Fri, excluding NYSE holidays (early closes at 13:00).
 const HOLIDAYS = new Set(['2026-01-01','2026-01-19','2026-02-16','2026-04-03','2026-05-25','2026-06-19','2026-07-03','2026-09-07','2026-11-26','2026-12-25','2027-01-01','2027-01-18','2027-02-15','2027-03-26','2027-05-31','2027-06-18','2027-07-05','2027-09-06','2027-11-25','2027-12-24']);
