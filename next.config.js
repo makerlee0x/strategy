@@ -8,6 +8,15 @@ const sec = [
 module.exports = {
   poweredByHeader: false,
   images: { unoptimized: true },
+  async redirects() {
+    return [
+      { source: '/earn', destination: '/mstr#work', permanent: true },
+      { source: '/opportunities', destination: '/mstr#work', permanent: true },
+      { source: '/learn', destination: '/mstr#how', permanent: true },
+      { source: '/resources', destination: '/mstr#how', permanent: true },
+      { source: '/tokens', destination: '/mstr', permanent: true }
+    ];
+  },
   async headers() {
     return [
       { source: '/(.*)', headers: sec },

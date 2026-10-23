@@ -22,7 +22,7 @@ async function morpho() {
 async function load() {
   const [k, m] = await Promise.allSettled([kamino(), morpho()]);
   const rows = [...(k.status === 'fulfilled' ? k.value : []), ...(m.status === 'fulfilled' ? m.value : [])];
-  rows.push({ protocol: 'Teller', chain: 'Robinhood Chain', token: 'MSTR, STRATEGY', maxLtvPct: null, borrowAsset: 'Stablecoins (fixed term)', borrowApyPct: null, suppliedUsd: null, borrowedUsd: null,
+  rows.push({ protocol: 'Teller', chain: 'Robinhood Chain', token: 'MSTR, $STRATEGY', maxLtvPct: null, borrowAsset: 'Stablecoins (fixed term)', borrowApyPct: null, suppliedUsd: null, borrowedUsd: null,
     url: 'https://pro.teller.org/borrow?collateral=mstr', source: 'Teller (announced)', note: 'Per-asset LTV/APY not published via a public API' });
   if (k.status !== 'fulfilled' && m.status !== 'fulfilled') throw new Error('all_failed');
   rows.sort((a, b) => (b.suppliedUsd || 0) - (a.suppliedUsd || 0));

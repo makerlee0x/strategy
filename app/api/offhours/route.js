@@ -7,7 +7,7 @@ const EARLY = new Set(['2026-11-27','2026-12-24','2027-11-26']);
 const POOLS = [
   ['Robinhood MSTR / USDG', 'robinhood', '0x319bac87e616a89e241c10aeb8afd4892a852cdd8b373cd9765ecddc40b87cfe'],
   ['Robinhood MSTR / USDG (2)', 'robinhood', '0xc105b8300ff65d750a0e4e63c7a879e20504069b770713464a5315e797735326'],
-  ['STRATEGY / MSTR', 'robinhood', '0xa6975f4720a95aa9cdfa9b010a065b0e941534c93f9fa708104c08f0ac029ca0'],
+  ['$STRATEGY / MSTR', 'robinhood', '0xa6975f4720a95aa9cdfa9b010a065b0e941534c93f9fa708104c08f0ac029ca0'],
   ['MSTRx / USDC (Solana)', 'solana', 'RyhF4cksVZY7vcqJpoytHcxcGNKRp27PEGhSnEPpbGv'],
   ['MSTRx / SOL (Solana)', 'solana', '2ngTuP7xA581dqX9uJkGRqxmKuehY3k4SDfPebeoRG2J'],
 ];

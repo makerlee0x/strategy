@@ -22,7 +22,7 @@ Requires Node 18.17 or newer.
 | VERCEL_PREVIEW_PREFIX | Allows `<prefix>*.vercel.app` preview origins |
 
 ## Pages
-`/` dashboard · `/strategy` ($STRATEGY coin; `?modal=swap|buy|pools`) · `/opportunities` · `/tokens` · `/learn` · `/tracker` · `/resources`
+`/` home · `/strategy` ($STRATEGY: pool, metrics; `?modal=swap|buy|pools`) · `/mstr` (MSTR On-Chain: overview, put it to work, how it works) · `/8k` (8-K day card) · `/terminal` (easter egg, linked from the $STRATEGY footer). Old paths (`/earn`, `/opportunities`, `/learn`, `/resources`, `/tokens`) redirect to `/mstr`.
 
 ## API (all server-cached, rate-limited, origin-checked)
 | Route | Source | Cache |
