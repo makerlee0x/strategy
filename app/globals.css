@@ -202,3 +202,11 @@ body:has(.mback) .buybar{display:none}
 .hero-mark .sticker{right:-22px;top:-34px;width:150px;height:150px;transform:rotate(-12deg);box-shadow:4px 4px 0 rgba(0,0,0,.25)}
 .hero-mark .sticker b{font-size:34px}.hero-mark .sticker span{font-size:10px;margin-top:4px}
 @media(max-width:760px){.hero-mark{position:relative;right:auto;top:auto;width:68%;margin:18px 0 26px auto}.hero-mark .sticker{position:absolute;right:-8px;top:-26px;width:104px;height:104px;margin:0}.hero-mark .sticker b{font-size:24px!important}.hero-mark .sticker span{font-size:8px}}
+/* Share image button and menu. */
+.sharewrap{position:relative;display:inline-block}
+.sharebtn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;border:0;padding:12px 18px;min-height:44px;font:inherit;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:4px 4px 0 var(--ink)}.sharebtn:disabled{opacity:.6;cursor:default}
+.sharemenu{position:absolute;left:0;top:calc(100% + 10px);z-index:50;width:300px;background:#f3e6dc;color:#1c0809;box-shadow:6px 6px 0 var(--red);text-align:left}
+.sharethumb{padding:12px;border-bottom:2px dashed #1c0809}.sharethumb img{display:block;width:100%;height:auto;background:#1c0809}.sharethumb .k{color:#6e5a52;margin-top:6px}
+.sharemenu a,.sharemenu button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid #1c080922;padding:12px 14px;font:inherit;font-size:13px;font-weight:700;color:#1c0809;text-decoration:none;cursor:pointer}.sharemenu a:hover,.sharemenu button:hover{background:#fffaf6}
+.sharemenu a span{font-weight:400;color:#6e5a52;font-size:11px;margin-left:4px}.sharenote{padding:10px 14px;font-size:12px;background:#1c0809;color:#f3e6dc}
+.tilt-a{background:#140506;color:var(--ink);border:2px solid var(--rule)}.tilt-a .sharebtn{width:100%;justify-content:center;box-shadow:4px 4px 0 var(--ink)}

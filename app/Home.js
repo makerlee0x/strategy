@@ -1,16 +1,15 @@
 'use client';
 // Landing page: the hybrid mockup (B1 red poster hero, A3 oxblood body). Detailed coin data lives on /strategy.
-import { fmt, num } from './data'; import { ShareX } from './ui'; import { useLive } from '../lib/useLive'; import { HOME } from './feeds'; import { summarize } from '../lib/metrics.mjs'; import Actions, { CopyAddr, ADDR } from './strategy/Modals'; import ShareOfSupply from './supply'; import { EightKBanner } from './eightk'; import { eightK, isFresh } from '../lib/eightk.mjs'; import { useEffect, useState } from 'react'; import { Mark } from './mark';
-const pc = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+import { fmt, num } from './data'; import ShareButton from './sharebtn'; import { useLive } from '../lib/useLive'; import { HOME } from './feeds'; import Actions, { CopyAddr, ADDR } from './strategy/Modals'; import ShareOfSupply from './supply'; import { EightKBanner } from './eightk'; import { eightK, isFresh } from '../lib/eightk.mjs'; import { useEffect, useState } from 'react'; import { Mark } from './mark';
 export default function Home({ init }) {
-  const [SM, PB, H, F8, T, PO, RH] = useLive(HOME, undefined, init);
+  const [SM, PB, F8, T, PO, RH] = useLive(HOME, undefined, init);
   const [force8k, setForce8k] = useState(false); useEffect(() => setForce8k(new URLSearchParams(location.search).get('8k') === '1'), []);
   const M = SM?.display || {}, S = PB?.strategy && !PB.strategy.error ? PB.strategy : null;
   const per1M = S ? S.stockInPool / 1e3 : null, p1 = per1M != null ? per1M.toFixed(2) : '—';
   const k8 = eightK(F8, per1M), show8k = k8 && (force8k || isFresh(k8));
-  const Y = H?.days?.length ? summarize(H.days) : null, sample = H?.sample, y30 = Y ? pc(Y.yield30d) : '—';
-  const tick = [`$STRATEGY ${M.priceUsd || '—'}`, `1M $STRATEGY = ${p1} MSTR`, `MSTR YIELD 30D ${y30}${sample ? ' (SAMPLE)' : ''}`, `${M.holders || '—'} HOLDERS`, `POOL HOLDS ${S ? num(S.stockInPool) : '—'} MSTR`].join(' ✦ ') + ' ✦';
-  const post = `Every 1M $STRATEGY sits on ${p1} MSTR in the pool. Amplified MSTR. strategycoin.io`;
+  const oneIn = S && RH?.supply ? Math.round(RH.supply / S.stockInPool) : null;
+  const tick = [`$STRATEGY ${M.priceUsd || '—'}`, `1M $STRATEGY = ${p1} MSTR`, `1 IN ${oneIn ?? '—'} ROBINHOOD MSTR`, `${M.holders || '—'} HOLDERS`, `POOL HOLDS ${S ? num(S.stockInPool) : '—'} MSTR`].join(' ✦ ') + ' ✦';
+  const post = `Every 1M $STRATEGY sits on ${p1} MSTR in the pool. Amplified MSTR.`;
   const tile = (h, t, s, hot) => <a href={h} style={{ textDecoration: 'none', padding: 22, background: hot ? 'var(--red)' : 'var(--panel)', color: hot ? 'var(--on-red)' : 'var(--ink)', boxShadow: hot ? '5px 5px 0 var(--ink)' : '5px 5px 0 var(--red)' }}><div className="d" style={{ fontSize: 22 }}>{t}</div><div style={{ fontSize: 12, marginTop: 6 }}>{s}</div></a>;
   return (<>
     <section className="hero-red"><div className="in">
@@ -35,7 +34,7 @@ export default function Home({ init }) {
 
     <ShareOfSupply S={S} RH={RH} />
 
-    <section style={{ display: 'flex', flexWrap: 'wrap', gap: 40, alignItems: 'center' }}>
+    <section id="stack" style={{ display: 'flex', flexWrap: 'wrap', gap: 40, alignItems: 'center', scrollMarginTop: 16 }}>
       <div style={{ flex: '999 1 460px', minWidth: 0 }}><h2 className="sec-h" style={{ marginBottom: 22 }}>Flex your stack</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 18 }}>
           <div className="stat"><div className="k">MSTR held</div><b>{S ? num(S.stockInPool) : '—'}</b></div>
@@ -43,12 +42,12 @@ export default function Home({ init }) {
           <div className="stat"><div className="k">Holders</div><b>{M.holders || '—'}</b></div>
         </div>
         <a href="/strategy/" style={{ display: 'inline-block', marginTop: 20, color: 'var(--red-t)' }}>All $STRATEGY stats →</a></div>
-      <div style={{ flex: '1 1 320px', minWidth: 0, display: 'flex', justifyContent: 'center', paddingTop: 40 }}><div className="tilt">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, fontWeight: 700 }}><span className="d" style={{ fontSize: 18, color: 'var(--red)' }}>$S</span><span>SHARE CARD</span></div>
-        <div className="d" style={{ fontSize: 36, margin: '18px 0 6px' }}>1M = {p1} MSTR</div>
-        <div style={{ fontSize: 13, lineHeight: 1.55 }}>every 1M $STRATEGY sits on {p1} MSTR in the pool. Amplified MSTR.</div>
-        <div className="chips2"><span style={{ background: 'var(--bg)', color: 'var(--ink)' }}>{y30} MSTR 30D{sample ? ' · SAMPLE' : ''}</span><span style={{ background: 'var(--red)', color: 'var(--on-red)' }}>{M.holders || '—'} HOLDERS</span></div>
-        <ShareX ready={per1M != null} text={post} style={{ display: 'block', textAlign: 'center', background: 'var(--bg)', color: 'var(--ink)', boxShadow: 'none', marginTop: 0 }} />
+      <div style={{ flex: '1 1 320px', minWidth: 0, display: 'flex', justifyContent: 'center', paddingTop: 40 }}><div className="tilt tilt-a">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, fontWeight: 700, letterSpacing: '.08em' }}><span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Mark fill="var(--red)" style={{ width: 26 }} /><span className="d" style={{ fontSize: 13 }}>STRATEGY COIN</span></span><span style={{ color: 'var(--mu)' }}>SHARE CARD</span></div>
+        <div className="d" style={{ fontSize: 76, lineHeight: .95, color: 'var(--red-t)', margin: '18px 0 4px' }}>{p1}</div>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.04em' }}>MSTR IN THE POOL FOR EVERY 1M $STRATEGY</div>
+        <div style={{ display: 'flex', gap: 18, borderTop: '2px solid var(--rule)', marginTop: 18, paddingTop: 12, marginBottom: 16 }}>{[['MSTR IN POOL', S ? num(S.stockInPool) : '—'], ['ROBINHOOD MSTR', oneIn ? '1 IN ' + oneIn : '—'], ['HOLDERS', M.holders || '—']].map(([k, v]) => <div key={k}><div style={{ fontSize: 8, color: 'var(--mu)', fontWeight: 700, letterSpacing: '.06em' }}>{k}</div><div className="d" style={{ fontSize: 17, marginTop: 3 }}>{v}</div></div>)}</div>
+        <ShareButton card="stack" ready={per1M != null} text={post} style={{ display: 'block' }} />
       </div></div></section>
 
     <section><h2 className="sec-h">Got MSTR? Put it to work.</h2><p className="sub" style={{ margin: '0 0 28px' }}>The one-stop shop for stock token holders. Every MSTR token, every chain, and what you can do with it.</p>

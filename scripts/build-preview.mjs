@@ -16,6 +16,7 @@ const W = mkdtempSync(join(tmpdir(), 'preview-'));
 for (const f of ['app', 'lib', 'data', 'public', 'package.json', 'next.config.js']) cpSync(join(ROOT, f), join(W, f), { recursive: true });
 symlinkSync(join(ROOT, 'node_modules'), join(W, 'node_modules'));
 rmSync(join(W, 'app/api'), { recursive: true });
+rmSync(join(W, 'app/share'), { recursive: true }); // share links need the image routes, which only exist on the live site
 
 // API routes → snapshot files: /api/chains → snapshot/chains.json
 edit(join(W, 'lib/useLive.js'), s => s.replace("fetch(u,", `fetch('${BASE}/snapshot/' + u.replace(/^\\/api\\//, '').replace(/[?&=]/g, '_') + '.json',`));
