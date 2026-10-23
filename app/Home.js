@@ -1,6 +1,6 @@
 'use client';
 // Landing page: the hybrid mockup (B1 red poster hero, A3 oxblood body). Detailed coin data lives on /strategy.
-import { fmt, num } from './data'; import { ShareX } from './ui'; import { useLive } from '../lib/useLive'; import { HOME } from './feeds'; import { summarize } from '../lib/metrics.mjs'; import Actions, { CopyAddr, ADDR } from './strategy/Modals'; import ShareOfSupply from './supply'; import { EightKBanner } from './eightk'; import { eightK, isFresh } from '../lib/eightk.mjs'; import { useEffect, useState } from 'react';
+import { fmt, num } from './data'; import { ShareX } from './ui'; import { useLive } from '../lib/useLive'; import { HOME } from './feeds'; import { summarize } from '../lib/metrics.mjs'; import Actions, { CopyAddr, ADDR } from './strategy/Modals'; import ShareOfSupply from './supply'; import { EightKBanner } from './eightk'; import { eightK, isFresh } from '../lib/eightk.mjs'; import { useEffect, useState } from 'react'; import { Mark } from './mark';
 const pc = v => v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
 export default function Home({ init }) {
   const [SM, PB, H, F8, T, PO, RH] = useLive(HOME, undefined, init);
@@ -14,13 +14,13 @@ export default function Home({ init }) {
   const tile = (h, t, s, hot) => <a href={h} style={{ textDecoration: 'none', padding: 22, background: hot ? 'var(--red)' : 'var(--panel)', color: hot ? 'var(--on-red)' : 'var(--ink)', boxShadow: hot ? '5px 5px 0 var(--ink)' : '5px 5px 0 var(--red)' }}><div className="d" style={{ fontSize: 22 }}>{t}</div><div style={{ fontSize: 12, marginTop: 6 }}>{s}</div></a>;
   return (<>
     <section className="hero-red"><div className="in">
+      <div className="hero-mark"><Mark fill="#ffffff" />{per1M != null && <div className="sticker" aria-label="MSTR per 1M $STRATEGY"><b>{p1}</b><span>MSTR PER 1M COINS</span></div>}</div>
       <p className="steps">step 1: hold MSTR<br />step 2: keep holding MSTR<br />step 3: hold the thing that holds MSTR</p>
       <h1>HOLD.<br />HOLD.<br /><span>AMPLIFY.</span></h1>
       <p className="lede">$STRATEGY is paired with tokenized MSTR. Every trade stacks MSTR for the Treasury.<br />That’s the strategy.</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center' }}><a className="pillbtn" href="#buy" style={{ background: '#ffffff', color: '#b51d27' }}>BUY $STRATEGY</a><span className="pillbtn" style={{ background: 'var(--bg)', color: '#ffffff', cursor: 'default' }}>STAKE · SOON</span></div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 26 }}><CopyAddr label="$STRATEGY" addr={ADDR.STRATEGY} /><CopyAddr label="MSTR · ROBINHOOD" addr={ADDR.MSTR} /></div>
       <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, margin: '10px 0 0', color: '#ffe3e5' }}>Both live on Robinhood Chain. Add them to your wallet so you can see the pair.</p>
-      {per1M != null && <div className="sticker" aria-label="MSTR per 1M $STRATEGY"><b>{p1}</b><span>MSTR PER 1M COINS</span></div>}
     </div></section>
     <div className="ticker" aria-label="$STRATEGY at a glance"><div><span>{tick}</span><span aria-hidden="true">{tick}</span></div></div>
     <Actions bare pools={(PO?.pools || []).slice(0, 10).map(p => ({ id: p.id, name: p.pair, dex: p.dex, liq: fmt(p.liquidityUsd), vol: fmt(p.volume24hUsd) }))} asOf={PO?.fetchedAt?.slice(0, 10) || ''} />

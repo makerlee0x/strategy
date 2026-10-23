@@ -1,5 +1,6 @@
 import { preflight, cachedFetch, json } from '../../../lib/guard';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 const RPC = process.env.NEXT_PUBLIC_ROBINHOOD_CHAIN_RPC_URL || 'https://rpc.mainnet.chain.robinhood.com';
 const MSTR = '0xec262a75e413fafd0df80480274532c79d42da09';
 const TRANSFER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', ZERO32 = '0x' + '0'.repeat(64);

@@ -196,3 +196,9 @@ button.btn{border:0;cursor:pointer;font-family:inherit}.cabtn{border:1px solid v
 .mcard .sw-warn{background:#d9232e12}
 @media(max-width:760px){.mstampx{display:none}.mhint{display:none}}
 body:has(.mback) .buybar{display:none}
+/* Homepage hero: the big mark, with the MSTR-per-1M sticker slapped on its corner. */
+.hero-mark{position:absolute;right:0;top:20px;width:min(430px,36%);z-index:1;filter:drop-shadow(10px 10px 0 rgba(28,8,9,.28))}
+.hero-mark svg{display:block;width:100%;height:auto}
+.hero-mark .sticker{right:-22px;top:-34px;width:150px;height:150px;transform:rotate(-12deg);box-shadow:4px 4px 0 rgba(0,0,0,.25)}
+.hero-mark .sticker b{font-size:34px}.hero-mark .sticker span{font-size:10px;margin-top:4px}
+@media(max-width:760px){.hero-mark{position:relative;right:auto;top:auto;width:68%;margin:18px 0 26px auto}.hero-mark .sticker{position:absolute;right:-8px;top:-26px;width:104px;height:104px;margin:0}.hero-mark .sticker b{font-size:24px!important}.hero-mark .sticker span{font-size:8px}}

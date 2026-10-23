@@ -1,6 +1,7 @@
 import { preflight, cachedFetch, lastGood, json } from '../../../lib/guard';
 import { loadFilings } from '../../../lib/filings';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 export async function OPTIONS(req) { return preflight(req); }
 export async function GET(req) {
   const pf = preflight(req, { browser: { limit: 30 }, anon: { limit: 10 }, prefix: 'filings' }); if (pf) return pf;
