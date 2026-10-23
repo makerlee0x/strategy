@@ -25,7 +25,7 @@ export default function View({ init }) {
       case 'help': case '?': out = HELP; break;
       case 'stack': out = ['BTC → MSTR → $STRATEGY', ['STRATEGY₿ INC. HOLDS ', num(f?.btcHeld) + ' BTC'], ['THE POOL HOLDS ', num(pool) + ' MSTR'], ['EVERY 1M $STRATEGY: ', n2(pool != null ? pool / 1e3 : null) + ' MSTR']]; break;
       case 'price': out = [['$STRATEGY ', (M.priceUsd || '—') + (chg ? '  ' + chg : '')], ['MARKET CAP ', M.marketCap || '—'], ['24H VOLUME ', M.volume24h || '—'], ['HOLDERS ', M.holders || '—']]; break;
-      case 'pool': out = [['MSTR IN POOL ', num(pool)], ['· LOCKED LAUNCH LIQUIDITY ', num(s ? pool - fee : null)], ['· COMPOUNDED BY FEES ', num(fee)], ['MSTR YIELD 30D ', pc(S?.yield30d) + (H?.sample ? ' (SAMPLE)' : '')], 'PART OF EVERY FEE GOES BACK IN. THE FLOOR ONLY RISES.']; break;
+      case 'pool': out = [['MSTR IN POOL ', num(pool)], ['· LOCKED LAUNCH LIQUIDITY ', num(s ? pool - fee : null)], ['· COMPOUNDED BY FEES ', num(fee)], ['MSTR YIELD 30D ', pc(S?.yield30d)], 'PART OF EVERY FEE GOES BACK IN. THE FLOOR ONLY RISES.']; break;
       case 'mstr': out = [['MSTR TOKENS ON-CHAIN ', num(t.circ)], ['WORTH ', fmt(t.mcap)], ['TRADED WHILE NASDAQ IS CLOSED ', OH?.all?.d30?.closedPct != null ? Math.round(OH.all.d30.closedPct) + '% (30D)' : '—'], 'MORE: /MSTR']; break;
       case '8k': out = f ? [['LATEST 8-K FILED ', dt(f.filingDate)], ['STRATEGY₿ INC. HOLDS ', num(f.btcHeld) + ' BTC'], ['CHANGE ', (F8.weeklyChangeBtc >= 0 ? '+' : '') + num(F8.weeklyChangeBtc) + ' BTC'], { href: f.doc, t: 'OPEN THE FILING ↗' }] : ['NO FILING LOADED. TRY AGAIN SOON.']; break;
       case 'buy': case 'sell': setLog(l => [...l.slice(-80), { c: raw.trim(), out: [] }]); exe.start(c); return;
