@@ -13,7 +13,7 @@ export default function View({ init }) {
   const t = T?.totals || {}, venues = (CH?.chains || []).filter(c => c.vol24Usd > 0).sort((a, b) => b.vol24Usd - a.vol24Usd), vmax = venues[0]?.vol24Usd || 1;
   const rh = (CH?.chains || []).find(c => c.key === 'robinhood'), off = OH?.all?.d30?.closedPct, f = F8?.latest, chg = F8?.weeklyChangeBtc;
   const rows = (C?.rows || []).filter(r => r.chain === 'Robinhood Chain'), morpho = rows.find(r => r.protocol === 'Morpho' && r.token === 'MSTR'), teller = rows.find(r => r.protocol === 'Teller');
-  const hl = (PP?.markets || []).find(m => m.venue === 'Hyperliquid');
+  const hl = (PP?.markets || []).find(m => m.venue === 'Hyperliquid'), li = (PP?.markets || []).find(m => m.venue === 'Lighter');
   return (<>
     <div className="pagehead"><div><div className="lbl" style={{ color: 'var(--red-t)' }}>For MSTR token holders · <St d={T} /></div><h1>MSTR, ON-CHAIN.</h1>
       <p className="sub" style={{ fontSize: 15, maxWidth: 620, margin: 0 }}>Strategy₿ Inc. stock (MSTR) now trades as a token, 24/7. How much exists, where it trades, how to put it to work, and how it works.</p></div>
@@ -33,25 +33,26 @@ export default function View({ init }) {
         <div style={{ fontSize: 13 }}>{chg != null && <b style={{ color: 'var(--red-t)' }}>{(chg >= 0 ? '+' : '') + num(chg)} BTC</b>}{F8?.previous?.asOf ? ' since ' + F8.previous.asOf.replace(/, \d{4}$/, '').replace(/^(\w{3})\w*/, '$1') : ''}{f?.doc && <> · <a href={f.doc} target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}>8-K filed {dt(f.filingDate)} ↗</a></>}</div></div>
     </div>
 
-    <h2 className="sec2" id="work">Put it to work</h2><p className="sub" style={{ margin: '0 0 18px' }}>What you can do with Robinhood MSTR on Robinhood Chain, plus 24/7 trading on Hyperliquid.</p>
+    <h2 className="sec2" id="work">Put it to work</h2><p className="sub" style={{ margin: '0 0 18px' }}>What you can do with Robinhood MSTR on Robinhood Chain, plus 24/7 trading on Hyperliquid and Lighter.</p>
     <div className="bento">
       <div className="tile s4"><div className="lbl ox">01 · Earn fees</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>Provide liquidity in an MSTR pool on Robinhood Chain and earn a share of every trade.</p>
         <div className="orow"><span>MSTR pool liquidity</span><b>{fmt(rh?.dexLiquidityUsd)}</b></div><div className="orow"><span>Traded, last 24h</span><b>{fmt(rh?.vol24Usd)}</b></div>
-        <Risk>if MSTR moves a lot, you end up holding more of whichever side fell. Fees change with volume.</Risk><Out href={'https://www.geckoterminal.com/robinhood/tokens/' + ADDR.MSTR}>Browse MSTR pools</Out></div>
+        <Risk>if MSTR moves a lot, you end up holding more of whichever side fell. Fees change with volume.</Risk><Out href="https://app.uniswap.org/explore/tokens/robinhood/0xec262a75e413fAfD0dF80480274532C79D42da09">Browse MSTR pools on Uniswap</Out></div>
       <div className="tile s4"><div className="lbl ox">02 · Borrow</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>Keep your MSTR and borrow stablecoins against it.</p>
-        {teller && <div className="orow"><span><b>Teller</b> · fixed term</span><span>no margin calls</span></div>}
-        {morpho && <div className="orow"><span><b>Morpho</b> · MSTR → {morpho.borrowAsset}</span><span>{pct(morpho.maxLtvPct, 1)} LTV · {pct(morpho.borrowApyPct)}</span></div>}
-        <Risk>if MSTR falls past the liquidation level, your collateral is sold.</Risk><Out href={teller?.url || 'https://pro.teller.org/borrow?collateral=mstr'}>Open Teller</Out></div>
+        {teller && <div className="orow"><span><a href={teller.url} target="_blank" rel="noopener"><b>Teller</b> ↗</a> · fixed term</span><span>no margin calls</span></div>}
+        {morpho && <div className="orow"><span><a href={morpho.url} target="_blank" rel="noopener"><b>Morpho</b> ↗</a> · MSTR → {morpho.borrowAsset}</span><span>{pct(morpho.maxLtvPct, 1)} LTV · {pct(morpho.borrowApyPct)}</span></div>}
+        <Risk>if MSTR falls past the liquidation level, your collateral is sold.</Risk></div>
       <div className="tile-line s4"><div className="lbl" style={{ color: 'var(--red-t)' }}>03 · Trade 24/7</div><p style={{ fontSize: 14, lineHeight: 1.5 }}>MSTR perpetual futures trade nights and weekends.</p>
-        {hl && <div className="orow" style={{ borderColor: 'var(--rule)' }}><span><b>Hyperliquid</b> · {hl.market}</span><span>{fmt(hl.vol24Usd)} · 24h</span></div>}
-        <p className="risk" style={{ margin: '14px 0 0', color: 'var(--ink)' }}>Risk: perps use leverage. A move against you can wipe out your margin.</p><Out href="https://app.hyperliquid.xyz/trade/xyz:MSTR">Open Hyperliquid</Out></div>
+        {hl && <div className="orow" style={{ borderColor: 'var(--rule)' }}><span><a href="https://app.hyperliquid.xyz/trade/xyz:MSTR" target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}><b>Hyperliquid</b> ↗</a> · {hl.market}</span><span>{fmt(hl.vol24Usd)} · 24h</span></div>}
+        {li && <div className="orow" style={{ borderColor: 'var(--rule)' }}><span><a href="https://lighter.xyz/" target="_blank" rel="noopener" style={{ color: 'var(--ink)' }}><b>Lighter</b> ↗</a> · {li.market}</span><span>{fmt(li.vol24Usd)} · 24h</span></div>}
+        <p className="risk" style={{ margin: '14px 0 0', color: 'var(--ink)' }}>Risk: perps use leverage. A move against you can wipe out your margin.</p></div>
     </div>
 
     <h2 className="sec2" id="how">How it works</h2><p className="sub" style={{ margin: '0 0 18px' }}>Three things, then you’re caught up.</p>
     <div className="bento">{[
       ['Where tokens come from', 'A market maker buys real MSTR shares, the issuer locks them and mints the same number of tokens. To exit, tokens are burned and the shares released. You just buy and sell.'],
       ['It trades 24/7. Nasdaq doesn’t.', 'MSTR tokens trade nights and weekends, so the token price can drift away from the last share price. Market makers pull it back by minting and burning when they can.'],
-      ['Good to know', 'Tokens give price exposure, not shareholder votes. Check Robinhood’s terms for who can hold them.']].map(([h, b], i) =>
+      ['Good to know', <>Tokens give price exposure, not shareholder votes (for now). <a href="https://robinhood.com/rhj/stocktokens/" target="_blank" rel="noopener" style={{ color: 'inherit' }}>Robinhood Stock Tokens ↗</a></>]].map(([h, b], i) =>
       <div key={h} className={(i === 2 ? 'tile-line' : 'tile') + ' s4'}><div className={'num' + (i === 2 ? '' : ' ox')} style={{ fontSize: 28 }}>0{i + 1}</div><h3 style={{ fontSize: 16, margin: '12px 0 8px' }}>{h}</h3><p style={{ fontSize: 14, lineHeight: 1.55, margin: 0 }}>{b}</p></div>)}</div>
   </>);
 }
